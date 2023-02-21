@@ -68,10 +68,11 @@ void ACreateVariableMachine::CreateVariable()
 	}
 
 	DataTypeToCreate = NodeDataTypes::Unassigned;
-	VariableName = "TestVariable";
-	VariableValue = "Null";
+	VariableName = "";
+	VariableValue = "";
 	VariableNumberValue = 0;
-	//bNameAssigned = false;
+	bNameAssigned = false;
+	bStartingValueAssigned = false;
 	bNumberVariable = false;
 }
 
@@ -85,26 +86,33 @@ void ACreateVariableMachine::SetDataType(NodeDataTypes TypeToAssign)
 	{
 		bNumberVariable = true; //Bool, float and int can be represented as number;
 	}
-	CreateVariable();
+	bStartingValueAssigned = false;
+	VariableValue = "";
+	VariableNumberValue = 0;
 }
 
-void ACreateVariableMachine::SetVariableName(FString NameToAssign)
+void ACreateVariableMachine::AddToVariableName(FString NameToAssign)
 {
-	VariableName =  NameToAssign;
-	bNameAssigned = true;
+	VariableName = VariableName + NameToAssign;
+	if(VariableName.Len() > 0)
+	{
+		bNameAssigned = true;
+	}
 }
 
-void ACreateVariableMachine::SetVariableStartingValue(FString ValueToAssign, double NumberValueToAssign, bool IsNumber)
+void ACreateVariableMachine::AddToVariableStartingValue(FString ValueToAssign, bool IsNumber)
 {
 	if(IsNumber)
 	{
 		bNumberVariable = true;
-		VariableNumberValue = NumberValueToAssign;
+		VariableValue += VariableValue + ValueToAssign;
+		VariableNumberValue = FCString::Atod(*VariableValue);
 	}
 	else
 	{
 		bNumberVariable = false;
-		VariableValue = ValueToAssign;
+		VariableValue = VariableValue + ValueToAssign;
 	}
+	bStartingValueAssigned = true;
 }
 

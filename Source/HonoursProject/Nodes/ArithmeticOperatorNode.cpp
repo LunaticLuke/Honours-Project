@@ -30,7 +30,7 @@ void AArithmeticOperatorNode::ExecuteNode()
 			FString EmptyString;
 			double NumberContainer;
 			
-			
+			Parameters[i].FunctionNodeActor->ExecuteNode();
 			
 			Parameters[i].FunctionNodeActor->ReturnValue(EmptyString,NumberContainer);
 			ParameterValues.Push(NumberContainer);
@@ -42,7 +42,8 @@ void AArithmeticOperatorNode::ExecuteNode()
 	}
 		int ParameterValue1 = ParameterValues[0];
 		int ParameterValue2 = ParameterValues[1]; //Create int versions for the modulus operator
-	
+
+	GEngine->AddOnScreenDebugMessage(INDEX_NONE,200,FColor::Green,FString::Printf(TEXT("Arithmetic: %f,%f"),ParameterValues[0],ParameterValues[1]));
 	switch (ArithmeticOperation)
 	{
 	case ArithmeticOperatorType::Addition:
@@ -77,7 +78,7 @@ bool AArithmeticOperatorNode::IsThereCompileError()
 				return true;
 			}
 
-			Parameters[i].FunctionNodeActor->ExecuteNode(); //Execute Nodes
+			//Parameters[i].FunctionNodeActor->ExecuteNode(); //Execute Nodes
 
 			if((Parameters[i].FunctionNodeActor->GetNumberReturnValue() == 0 && ArithmeticOperation == ArithmeticOperatorType::Division) || (Parameters[i].FunctionNodeActor->GetNumberReturnValue() == 0 && ArithmeticOperation == ArithmeticOperatorType::Modulus)) //Preventing Divide By Zero errors for modulus and division
 			{

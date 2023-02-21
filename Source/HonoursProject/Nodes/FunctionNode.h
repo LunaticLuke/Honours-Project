@@ -14,7 +14,9 @@ struct FParameterInfo
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere)
 	FString ParameterName;
+	UPROPERTY(EditAnywhere)
 	class AVariableNodeActor* VariableNodeActor;
+	UPROPERTY(EditAnywhere)
 	class AFunctionNode* FunctionNodeActor;
 	NodeDataTypes CurrentParameterDataType;
 	//Stores whether this parameter has to be a variable (E.g, the left variable of an assignment has to be a variable to be assigned to, you cant assign to a function.
@@ -49,7 +51,7 @@ public:
 	FString GetWordReturnValue();
 
 	double GetNumberReturnValue();
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AFunctionNode* CurrentAttachedNode;
 	UPROPERTY(BlueprintReadWrite)
 	AFunctionNode* CurrentAttachedParent;
@@ -57,7 +59,10 @@ public:
 	bool bAttachedToNode = false;
 	UPROPERTY(BlueprintReadWrite)
 	bool RootNode = true;
-
+	
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bWithinFunction = false;
 protected:
 	UPROPERTY(Category="Parameters",EditAnywhere)
 	TArray<FParameterInfo> Parameters;
@@ -71,7 +76,16 @@ protected:
 	FString WordReturn;
 	
 	double NumberReturn;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UStaticMeshComponent* Parameter1Mesh;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UStaticMeshComponent* Parameter2Mesh;
+
+	UFUNCTION()
+	virtual void OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
 public:
+	
 	UFUNCTION(BlueprintCallable)
 	virtual void ExecuteNode();
 	/**
@@ -79,6 +93,8 @@ public:
 	 * @return Whether an error has been found or not
 	 */
 	virtual bool IsThereCompileError();
+
+
 	
 	
 	UFUNCTION(BlueprintCallable)

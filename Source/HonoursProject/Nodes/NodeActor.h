@@ -19,6 +19,8 @@ public:
 	// Sets default values for this actor's properties
 	ANodeActor();
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bIsHeld = false;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,7 +35,6 @@ protected:
 	class UTextRenderComponent* NodeTextComponent;
 
 	virtual void DisplayText();
-
 
 
 public:	

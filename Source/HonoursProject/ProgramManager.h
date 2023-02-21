@@ -40,9 +40,9 @@ protected:
 	ANodeConsoleManager* Console;
 
 	AVariableConsoleUI* VariableUI;
-	
+	UPROPERTY(EditAnywhere)
 	TArray<class AVariableNodeActor*> ProgramVariables;
-
+	UPROPERTY(EditAnywhere)
 	TArray<FVariableProgramData> VariableData;
 
 	void DisplayVariables();

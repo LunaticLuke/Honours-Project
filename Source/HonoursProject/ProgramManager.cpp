@@ -28,7 +28,7 @@ void AProgramManager::DisplayVariables()
 {
 	for(int i = 0; i < ProgramVariables.Num();i++)
 	{
-		if(ProgramVariables[i]->GetDataType() == NodeDataTypes::String || ProgramVariables[i]->GetDataType() == NodeDataTypes::Char)
+		if(ProgramVariables[i]->GetDataType() == NodeDataTypes::String || ProgramVariables[i]->GetDataType() == NodeDataTypes::Char || ProgramVariables[i]->GetDataType() == NodeDataTypes::Bool)
 		{
 			Console->AddToLog(EnumManager::ConvertDataTypeToString(ProgramVariables[i]->GetDataType()) + " " + ProgramVariables[i]->GetVariableName() + " = " + VariableData[i].CurrentTextValue);
 		}
@@ -49,6 +49,7 @@ void AProgramManager::Tick(float DeltaTime)
 void AProgramManager::AddFunctionToProgram(AFunctionNode* FunctionToAdd)
 {
 	ProgramExecution.Push(FunctionToAdd);
+	FunctionToAdd->bAddedToProgram = true;
 	Console->DisplayProgramExecution(FunctionToAdd);
 }
 
@@ -57,23 +58,26 @@ void AProgramManager::RunProgram()
 	bool FoundError =  false;
 	for(int i = 0; i < ProgramExecution.Num();i++)
 	{
-		if(ProgramExecution[i]->ReturnType != NodeDataTypes::Unassigned) //If the function isn't void, it should be assigned to or used within a statement. Functions with a return type cannot just be called like other nodes.
+		//Check that the node isnt part of a function, if it is, the execution will be handled when we call execute on the parent node. Hence, doesnt need to be executed here.
+		if(!ProgramExecution[i]->bWithinFunction)
 		{
-			FString ErrorMessage = "Function Of Return Type " + EnumManager::ConvertDataTypeToString(ProgramExecution[i]->ReturnType) + " Is Unassigned To";
-			Console->AddToLog(ErrorMessage);
-			//break;
-		}
+			if(ProgramExecution[i]->ReturnType != NodeDataTypes::Unassigned) //If the function isn't void, it should be assigned to or used within a statement. Functions with a return type cannot just be called like other nodes.
+				{
+				FString ErrorMessage = "Function Of Return Type " + EnumManager::ConvertDataTypeToString(ProgramExecution[i]->ReturnType) + " Is Unassigned To";
+				Console->AddToLog(ErrorMessage);
+				//break;
+				}
 		
-		FoundError = ProgramExecution[i]->IsThereCompileError();
-		if(FoundError)
-		{
-			Console->AddToLog(ProgramExecution[i]->GetErrorMessage());
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,ProgramExecution[i]->GetErrorMessage());
-			break;
-		}
-		else
-		{
-			ProgramExecution[i]->ExecuteNode();
+			FoundError = ProgramExecution[i]->IsThereCompileError();
+			if(FoundError)
+			{
+				Console->AddToLog(ProgramExecution[i]->GetErrorMessage());
+				break;
+			}
+			else
+			{
+				ProgramExecution[i]->ExecuteNode();
+			}
 		}
 	}
 	DisplayVariables();

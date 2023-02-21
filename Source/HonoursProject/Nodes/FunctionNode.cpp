@@ -8,11 +8,19 @@
 
 AFunctionNode::AFunctionNode()
 {
+	Parameter1Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Parameter 1 Mesh"));
+	Parameter1Mesh->SetupAttachment(RootComponent);
+
+	
+	Parameter2Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Parameter 2 Mesh"));
+	Parameter2Mesh->SetupAttachment(RootComponent);
 }
 
 void AFunctionNode::BeginPlay()
 {
 	Super::BeginPlay();
+	Parameter1Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
+	Parameter2Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
 }
 
 void AFunctionNode::Tick(float DeltaSeconds)
@@ -73,8 +81,8 @@ else //Invalid type
 	
 	if(!ValidDataType) //If it is of an invalid type
 	{
-		if(VariableNode){ErrorMessage = UEnum::GetValueAsString(VariableNode->GetDataType()) + " Is Not A Valid Type For " + Parameters[ParameterNumber].ParameterName;}
-		if(FunctionNode) {ErrorMessage = UEnum::GetValueAsString(FunctionNode->ReturnType) + " Is Not A Valid Type For " + Parameters[ParameterNumber].ParameterName;}	
+		if(VariableNode){ErrorMessage = EnumManager::ConvertDataTypeToString(VariableNode->GetDataType()) + " Is Not A Valid Type For " + Parameters[ParameterNumber].ParameterName;}
+		if(FunctionNode) {ErrorMessage = EnumManager::ConvertDataTypeToString(FunctionNode->ReturnType) + " Is Not A Valid Type For " + Parameters[ParameterNumber].ParameterName;}	
 		Manager->GetConsole()->AddToLog(ErrorMessage);
 		return false; //Break out, incorrect data type.
 	}
@@ -101,6 +109,28 @@ else //Invalid type
 	return true; //Return true, this variable can be added as a parameter.
 }
 
+void AFunctionNode::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
+{
+	float ParamNumber = -5;
+	if(OverlappedComponent == Parameter1Mesh)
+	{
+		ParamNumber = 0;
+	}
+	else if(OverlappedComponent == Parameter2Mesh)
+	{
+		ParamNumber = 1;
+	}
+	
+	if(ParamNumber >= 0)
+	{
+		if(OtherActor->IsA(AVariableNodeActor::StaticClass()) || OtherActor->IsA(AFunctionNode::StaticClass()))
+		{
+			AddParameter(ParamNumber,OtherActor);
+		}
+	}
+}
+
 void AFunctionNode::ExecuteNode()
 {
 
@@ -114,19 +144,21 @@ bool AFunctionNode::IsThereCompileError()
 
 void AFunctionNode::AddParameter(int ParameterNumber, AActor* NodeToSet)
 {
-	if(IsParameterSuitable(ParameterNumber,NodeToSet)) //If the parameter is found to be suitable
-	{
-		//Parameters[ParameterNumber].ActorComponent = NodeToSet; //Store the actor
-		//NodeToSet->AttachToComponent(NodeStaticMesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale); //Attach the parameter to this node.
-		UPrimitiveComponent* Comp = Cast<UPrimitiveComponent>(NodeToSet);
-		if(Comp)
-		{
-			//Comp->SetSimulatePhysics(false); //Disable the physics.
-		}
-		DisplayText(); //Update the text to show the new variable.
-	}
-	else
-	{
-		Manager->GetConsole()->AddToLog(ErrorMessage);
-	}
+			if(IsParameterSuitable(ParameterNumber,NodeToSet)) //If the parameter is found to be suitable
+				{
+				//Parameters[ParameterNumber].ActorComponent = NodeToSet; //Store the actor
+				//NodeToSet->AttachToComponent(NodeStaticMesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale); //Attach the parameter to this node.
+				UPrimitiveComponent* Comp = Cast<UPrimitiveComponent>(NodeToSet);
+				if(Comp)
+				{
+					//Comp->SetSimulatePhysics(false); //Disable the physics.
+				}
+				DisplayText(); //Update the text to show the new variable.
+				}
+			else
+			{
+				Manager->GetConsole()->AddToLog(ErrorMessage);
+			}
+		
+	
 }

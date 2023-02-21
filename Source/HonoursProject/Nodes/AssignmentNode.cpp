@@ -23,11 +23,12 @@ void AAssignmentNode::ExecuteNode()
 	//Check whether parameter 2 is a variable being passed in or function. 
 	if(Parameters[1].VariableNodeActor)
 	{
-		TextValue = Parameters[1].VariableNodeActor->GetVariableValue();
-		NumberValue = Parameters[1].VariableNodeActor->GetNumberValue();
+		TextValue = Manager->GetVariableNode(Parameters[1].VariableNodeActor->GetVariableName())->GetVariableValue();
+		NumberValue = Manager->GetVariableNode(Parameters[1].VariableNodeActor->GetVariableName())->GetNumberValue();
 	}
 	else
 	{
+		Parameters[1].FunctionNodeActor->ExecuteNode();
 		TextValue = Parameters[1].FunctionNodeActor->GetWordReturnValue();
 		NumberValue = Parameters[1].FunctionNodeActor->GetNumberReturnValue();
 	}
@@ -49,7 +50,7 @@ bool AAssignmentNode::IsThereCompileError()
 				return true;
 				}
 
-			Parameters[i].FunctionNodeActor->ExecuteNode(); //Execute Node
+			//Parameters[i].FunctionNodeActor->ExecuteNode(); //Execute Node
 		}
 		else if(Parameters[i].VariableNodeActor)
 		{

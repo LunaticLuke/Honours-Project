@@ -8,6 +8,9 @@
 #include "Components/Button.h"
 #include "CreateVariableUI.generated.h"
 
+
+class UTypeLetterButton;
+
 /**
  * 
  */
@@ -18,7 +21,11 @@ class HONOURSPROJECT_API UCreateVariableUI : public UUserWidget
 
 public:
 	
-	
+	virtual void NativeConstruct() override;
+	void ShowKeyboard(bool bShow);
+	void SetupButtons(ACreateVariableMachine* Machine);
+
+
 	
 	UPROPERTY(meta=(BindWidget))
 	USelectDataTypeButton* SelectBool;
@@ -31,5 +38,15 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	USelectDataTypeButton* SelectChar;
 
-	void SetupButtons(ACreateVariableMachine* Machine);
+
+	TArray<UTypeLetterButton*> KeyboardButtons;
+
+	bool bChoosingVariableName = true;
+
+	bool bChoosingVariableStartingValue = false;
+	
+	UPROPERTY(meta=(BindWidget))
+	UButton* BackspaceKey;
+	
+	
 };

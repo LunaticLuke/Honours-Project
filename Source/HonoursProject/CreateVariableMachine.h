@@ -24,9 +24,11 @@ protected:
 
 	NodeDataTypes DataTypeToCreate = NodeDataTypes::Unassigned;
 
-	FString VariableName = "TestVariable";
+	FString VariableName = "";
 
 	bool bNameAssigned = false;
+
+	bool bStartingValueAssigned = false;
 
 	bool bNumberVariable = false;
 
@@ -58,9 +60,9 @@ public:
 
 	void SetDataType(NodeDataTypes TypeToAssign);
 
-	void SetVariableName(FString NameToAssign);
+	void AddToVariableName(FString NameToAssign);
 
-	void SetVariableStartingValue(FString ValueToAssign, double NumberValueToAssign,bool IsNumber);
+	void AddToVariableStartingValue(FString ValueToAssign, bool IsNumber);
 
 	
 	
