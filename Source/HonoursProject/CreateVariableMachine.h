@@ -9,6 +9,8 @@
 #include "Nodes/VariableNodeActor.h"
 #include "CreateVariableMachine.generated.h"
 
+
+class UCreateVariableUI;
 UCLASS()
 class HONOURSPROJECT_API ACreateVariableMachine : public AActor
 {
@@ -32,7 +34,7 @@ protected:
 
 	bool bNumberVariable = false;
 
-	FString VariableValue = "Null";
+	FString VariableValue = "";
 
 	double VariableNumberValue = 0;
 
@@ -50,6 +52,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UWidgetComponent* CreateVariableUI;
 
+	UCreateVariableUI* UIClass;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AVariableNodeActor> DefaultVariableNode;
 public:	
@@ -64,7 +67,14 @@ public:
 
 	void AddToVariableStartingValue(FString ValueToAssign, bool IsNumber);
 
-	
-	
+	NodeDataTypes GetCurrentDataType();
+
+	void Backspace();
+
+	bool bChoosingVariableName = true;
+
+	bool bChoosingVariableStartingValue = false;
+
+	bool bCapsLock = false;
 
 };

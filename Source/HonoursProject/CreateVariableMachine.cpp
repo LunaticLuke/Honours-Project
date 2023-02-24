@@ -33,8 +33,12 @@ ACreateVariableMachine::ACreateVariableMachine()
 void ACreateVariableMachine::BeginPlay()
 {
 	Super::BeginPlay();
-	Cast<UCreateVariableUI>(CreateVariableUI->GetWidget())->SetupButtons(this);
-	bNameAssigned = true;
+	UIClass = Cast<UCreateVariableUI>(CreateVariableUI->GetWidget());
+	UIClass->SetupButtons(this);
+	//UIClass->SelectName();
+	UIClass->ShowNumbers(false);
+	UIClass->ShowKeyboard(false);
+	UIClass->UpdateText(EnumManager::ConvertDataTypeToString(DataTypeToCreate),VariableName,VariableValue);
 }
 
 // Called every frame
@@ -49,7 +53,7 @@ void ACreateVariableMachine::CreateVariable()
 {
 	if(DataTypeToCreate != NodeDataTypes::Unassigned) //Check that the player has actually assigned a variable as a variable needs a data type.
 	{
-		if(bNameAssigned) //Check that the player has actually assigned a name as variables need a name.
+		if(bNameAssigned && bStartingValueAssigned) //Check that the player has actually assigned a name as variables need a name.
 		{
 			LastCreatedVariable =  GetWorld()->SpawnActor<AVariableNodeActor>(DefaultVariableNode,SpawnLocation->GetComponentLocation(),SpawnLocation->GetComponentRotation());
 			LastCreatedVariable->AddForce(SpawnLocation->GetComponentLocation(),SpawnLocation->GetComponentLocation() * 100);
@@ -74,6 +78,8 @@ void ACreateVariableMachine::CreateVariable()
 	bNameAssigned = false;
 	bStartingValueAssigned = false;
 	bNumberVariable = false;
+	UIClass->SelectName();
+	UIClass->UpdateText(EnumManager::ConvertDataTypeToString(DataTypeToCreate),VariableName,VariableValue);
 }
 
 void ACreateVariableMachine::SetDataType(NodeDataTypes TypeToAssign)
@@ -89,6 +95,8 @@ void ACreateVariableMachine::SetDataType(NodeDataTypes TypeToAssign)
 	bStartingValueAssigned = false;
 	VariableValue = "";
 	VariableNumberValue = 0;
+	UIClass->SelectName();
+	UIClass->UpdateText(EnumManager::ConvertDataTypeToString(DataTypeToCreate),VariableName,VariableValue);
 }
 
 void ACreateVariableMachine::AddToVariableName(FString NameToAssign)
@@ -98,6 +106,7 @@ void ACreateVariableMachine::AddToVariableName(FString NameToAssign)
 	{
 		bNameAssigned = true;
 	}
+	UIClass->UpdateText(EnumManager::ConvertDataTypeToString(DataTypeToCreate),VariableName,VariableValue);
 }
 
 void ACreateVariableMachine::AddToVariableStartingValue(FString ValueToAssign, bool IsNumber)
@@ -114,5 +123,23 @@ void ACreateVariableMachine::AddToVariableStartingValue(FString ValueToAssign, b
 		VariableValue = VariableValue + ValueToAssign;
 	}
 	bStartingValueAssigned = true;
+	UIClass->UpdateText(EnumManager::ConvertDataTypeToString(DataTypeToCreate),VariableName,VariableValue);
+}
+
+NodeDataTypes ACreateVariableMachine::GetCurrentDataType()
+{
+	return DataTypeToCreate;
+}
+
+void ACreateVariableMachine::Backspace()
+{
+	if(bChoosingVariableName && VariableName.Len() > 0)
+	{
+		VariableName.RemoveAt(VariableName.Len() - 1);
+	}else if(bChoosingVariableStartingValue && VariableValue.Len() > 0)
+	{
+		VariableValue.RemoveAt(VariableValue.Len() - 1);
+	}
+	UIClass->UpdateText(EnumManager::ConvertDataTypeToString(DataTypeToCreate),VariableName,VariableValue);
 }
 

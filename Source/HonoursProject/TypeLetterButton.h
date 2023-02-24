@@ -14,8 +14,13 @@ class HONOURSPROJECT_API UTypeLetterButton : public UButton
 {
 	GENERATED_BODY()
 
+	UTypeLetterButton();
 public:
 	class ACreateVariableMachine* MachineRef;
+	UPROPERTY(EditAnywhere)
+	bool bLetter = true;
+	UFUNCTION()
+	void AddCharacter();
 protected:
 	UPROPERTY(EditAnywhere)
 	FString LowerCaseCharacterToAdd;
@@ -23,8 +28,4 @@ protected:
 	FString UpperCaseCharacterToAdd;
 	UPROPERTY(EditAnywhere)
 	FString NumberToAdd;
-	UFUNCTION()
-	void AddCharacter();
-	UPROPERTY(EditAnywhere)
-	bool bLetter = true;
 };
