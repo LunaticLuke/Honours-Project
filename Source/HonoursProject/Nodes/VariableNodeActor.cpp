@@ -95,21 +95,11 @@ bool AVariableNodeActor::IsVariableAssignedValue()
 void AVariableNodeActor::DisplayText()
 {
 	FString StringToSet;
-	if(VariableDataType == NodeDataTypes::String || VariableDataType == NodeDataTypes::Char)
+	if(VariableDataType == NodeDataTypes::String || VariableDataType == NodeDataTypes::Char || VariableDataType == NodeDataTypes::Bool)
 	{
 		StringToSet =EnumManager::ConvertDataTypeToString(VariableDataType) +" " + VariableName + " = " + VariableValue;
 	}
-	else if(VariableDataType == NodeDataTypes::Bool)
-	{
-		if(VariableNumberValue == 0)
-		{
-			StringToSet =EnumManager::ConvertDataTypeToString(VariableDataType) +" " + VariableName + " = false";
-		}
-		else
-		{
-			StringToSet =EnumManager::ConvertDataTypeToString(VariableDataType) +" " + VariableName + " = true";
-		}
-	}
+
 	else{
 		StringToSet =EnumManager::ConvertDataTypeToString(VariableDataType) +" " + VariableName + " = " + FString::SanitizeFloat(VariableNumberValue);
 	}

@@ -56,10 +56,11 @@ void ACreateVariableMachine::CreateVariable()
 		if(bNameAssigned && bStartingValueAssigned) //Check that the player has actually assigned a name as variables need a name.
 		{
 			LastCreatedVariable =  GetWorld()->SpawnActor<AVariableNodeActor>(DefaultVariableNode,SpawnLocation->GetComponentLocation(),SpawnLocation->GetComponentRotation());
-			LastCreatedVariable->AddForce(SpawnLocation->GetComponentLocation(),SpawnLocation->GetComponentLocation() * 100);
+			LastCreatedVariable->AddForce(SpawnLocation->GetComponentLocation(),SpawnLocation->GetForwardVector() * 50);
 			LastCreatedVariable->SetDataType(DataTypeToCreate);
 			LastCreatedVariable->SetVariableName(VariableName);
 			LastCreatedVariable->SetVariableValue(VariableValue);
+			LastCreatedVariable->SetNumberValue(VariableNumberValue);
 		}
 		else
 		{
@@ -85,7 +86,7 @@ void ACreateVariableMachine::CreateVariable()
 void ACreateVariableMachine::SetDataType(NodeDataTypes TypeToAssign)
 {
 	DataTypeToCreate = TypeToAssign;
-	if(TypeToAssign == NodeDataTypes::Char || TypeToAssign ==NodeDataTypes::String) //String and char can be represented as a string;
+	if(TypeToAssign == NodeDataTypes::Char || TypeToAssign ==NodeDataTypes::String || TypeToAssign == NodeDataTypes::Bool) //String and char can be represented as a string;
 	{
 		bNumberVariable = false;
 	}else
@@ -114,7 +115,7 @@ void ACreateVariableMachine::AddToVariableStartingValue(FString ValueToAssign, b
 	if(IsNumber)
 	{
 		bNumberVariable = true;
-		VariableValue += VariableValue + ValueToAssign;
+		VariableValue = VariableValue + ValueToAssign;
 		VariableNumberValue = FCString::Atod(*VariableValue);
 	}
 	else

@@ -25,7 +25,7 @@ void AConditionalStatementNode::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&AConditionalStatementNode::CheckCodeBlock,0.25f,true,0.25f);
 	Parameter2Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Parameter2Mesh->SetHiddenInGame(true);
-	Parameters.Pop();
+	//Parameters.Pop();
 }
 
 void AConditionalStatementNode::Tick(float DeltaSeconds)
