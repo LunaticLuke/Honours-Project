@@ -63,6 +63,8 @@ public:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	bool bWithinFunction = false;
+
+	AActor* GetParameter(int Index);
 protected:
 	UPROPERTY(Category="Parameters",EditAnywhere)
 	TArray<FParameterInfo> Parameters;

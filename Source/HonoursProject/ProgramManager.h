@@ -10,14 +10,18 @@
 class ANodeConsoleManager;
 class AVariableConsoleUI;
 //A struct that stores the current value of each variable in the program as well as the starting value;
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FVariableProgramData
 {
 	GENERATED_BODY()
+	UPROPERTY(EditAnywhere)
 	FString StartingTextValue;
+	UPROPERTY(EditAnywhere)
 	FString CurrentTextValue;
 
+	UPROPERTY(EditAnywhere)
 	double StartingNumberValue;
+	UPROPERTY(EditAnywhere)
 	double CurrentNumberValue;
 };
 
@@ -34,15 +38,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TArray<class AFunctionNode*> ProgramExecution;
 	UPROPERTY(EditAnywhere)
 	ANodeConsoleManager* Console;
 
 	AVariableConsoleUI* VariableUI;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TArray<class AVariableNodeActor*> ProgramVariables;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TArray<FVariableProgramData> VariableData;
 
 	void DisplayVariables();

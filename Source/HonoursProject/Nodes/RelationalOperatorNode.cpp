@@ -10,6 +10,11 @@ ARelationalOperatorNode::ARelationalOperatorNode()
 {
 }
 
+ERelationalOperators ARelationalOperatorNode::GetRelationalOperator()
+{
+	return RelationalOperator;
+}
+
 void ARelationalOperatorNode::BeginPlay()
 {
 	Super::BeginPlay();

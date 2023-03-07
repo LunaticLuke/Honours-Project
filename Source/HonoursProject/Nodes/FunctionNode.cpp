@@ -45,6 +45,25 @@ double AFunctionNode::GetNumberReturnValue()
 	return NumberReturn;
 }
 
+AActor* AFunctionNode::GetParameter(int Index)
+{
+	if(Index < Parameters.Num())
+	{
+		if(Parameters[Index].VariableNodeActor)
+		{
+			return Parameters[Index].VariableNodeActor;
+		}
+		else
+		{
+			return Parameters[Index].FunctionNodeActor;
+		}
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 bool AFunctionNode::IsParameterSuitable(int ParameterNumber, AActor* NodeToSet)
 {
 	AVariableNodeActor* VariableNode = Cast<AVariableNodeActor>(NodeToSet); //See if the parameter trying to be added is a variable node.

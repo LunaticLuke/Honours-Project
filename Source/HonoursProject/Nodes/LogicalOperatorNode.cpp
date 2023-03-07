@@ -12,6 +12,11 @@ ALogicalOperatorNode::ALogicalOperatorNode()
 	
 }
 
+ELogicalOperators ALogicalOperatorNode::GetLogicalOperator()
+{
+	return  LogicalOperator;
+}
+
 void ALogicalOperatorNode::BeginPlay()
 {
 	Super::BeginPlay();

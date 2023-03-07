@@ -20,6 +20,9 @@ class HONOURSPROJECT_API ALogicalOperatorNode : public AFunctionNode
 	GENERATED_BODY()
 
 	ALogicalOperatorNode();
+
+public:
+	ELogicalOperators GetLogicalOperator();
 	
 protected:
 

@@ -156,3 +156,8 @@ void AArithmeticOperatorNode::DisplayText()
 	NodeTextComponent->SetText(FText::FromString(TextComponentMessage));
 	
 }
+
+ArithmeticOperatorType AArithmeticOperatorNode::GetArithmeticOperatorType()
+{
+	return ArithmeticOperation;
+}

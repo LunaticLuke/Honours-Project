@@ -34,6 +34,7 @@ public:
 
 	virtual void DisplayText() override;
 
+	ArithmeticOperatorType GetArithmeticOperatorType();
 protected:
 	UPROPERTY(EditAnywhere)
 	ArithmeticOperatorType ArithmeticOperation;

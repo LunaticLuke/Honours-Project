@@ -26,6 +26,9 @@ class HONOURSPROJECT_API ARelationalOperatorNode : public AFunctionNode
 	GENERATED_BODY()
 
 ARelationalOperatorNode();
+
+public:
+	ERelationalOperators GetRelationalOperator();
 protected:
 	virtual void BeginPlay() override;
 	
