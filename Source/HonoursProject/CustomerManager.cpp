@@ -77,3 +77,8 @@ void ACustomerManager::Tick(float DeltaTime)
 	
 }
 
+int ACustomerManager::GetServedCustomers()
+{
+	return ServedCustomers;
+}
+
