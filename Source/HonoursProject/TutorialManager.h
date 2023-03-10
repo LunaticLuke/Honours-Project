@@ -7,6 +7,8 @@
 #include "TutorialManager.generated.h"
 
 
+class AAnswerBlock;
+class ANPCHelper;
 class ACustomerManager;
 class UWidgetComponent;
 class UTutorialUI;
@@ -65,11 +67,26 @@ struct FTutorialTask
 	UPROPERTY(EditAnywhere)
 	FString CorrectAnswer;
 
+	UPROPERTY(EditAnywhere)
+	bool bAllowCustomers = false;
+	
 	//Has this task been completed?
 	UPROPERTY(EditAnywhere)
 	bool bCompletedTask = false;
 };
 
+USTRUCT()
+struct FQuizQuestion
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere)
+	FString Answer;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<FString> PotentialAnswers;
+	
+};
 
 UCLASS()
 class HONOURSPROJECT_API ATutorialManager : public AActor
@@ -92,7 +109,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<FTutorialTask> TutorialTasks;
 	
-
+	UFUNCTION()
+	virtual void OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
 	
 	UFUNCTION()
 	void CheckProgress();
@@ -103,8 +121,14 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UWidgetComponent* WidgetComponent;
-	
+	UPROPERTY(EditAnywhere)
 	UTutorialUI* TutorialUI;
+
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* QuizWidgetComponent;
+	UPROPERTY(EditAnywhere)
+	UTutorialUI* QuizUI;
+	
 	UPROPERTY(EditAnywhere)
 	FString QuizAnswer = "";
 	
@@ -112,7 +136,21 @@ protected:
 	ACustomerManager* CustomerManager;
 
 	UPROPERTY(EditAnywhere)
-	AActor* NPCHelper;
+	ANPCHelper* NPCHelper;
+
+	void SetupTask();
+
+	UPROPERTY(EditAnywhere)
+	TArray<AAnswerBlock*> AnswerBlocks;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<FQuizQuestion> QuizQuestions;
+	UPROPERTY(EditAnywhere)
+	AActor* BlocksSpawnPoint;
+
+	int CurrentQuizQuestion = 0;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* AnswerBoxMesh;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

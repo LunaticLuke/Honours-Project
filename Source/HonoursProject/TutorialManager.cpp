@@ -3,7 +3,9 @@
 
 #include "TutorialManager.h"
 
+#include "AnswerBlock.h"
 #include "CustomerManager.h"
+#include "NPCHelper.h"
 #include "TutorialUI.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -15,6 +17,10 @@ ATutorialManager::ATutorialManager()
 	PrimaryActorTick.bCanEverTick = true;
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Tutorial UI"));
+
+	QuizWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Quiz UI"));
+
+	AnswerBoxMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Answer Box Mesh"));
 }
 
 // Called when the game starts or when spawned
@@ -23,6 +29,22 @@ void ATutorialManager::BeginPlay()
 	Super::BeginPlay();
 	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ATutorialManager::CheckProgress,0.2f,true,0.2f);
 	TutorialUI = Cast<UTutorialUI>(WidgetComponent->GetWidget());
+	TutorialUI->SetQuiz(false);
+	QuizUI = Cast<UTutorialUI>(QuizWidgetComponent->GetWidget());
+	QuizUI->SetQuiz(true);
+	AnswerBoxMesh->OnComponentBeginOverlap.AddDynamic(this,&ATutorialManager::OnParameterOverlap);
+}
+
+void ATutorialManager::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
+{
+	GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Hit"));
+	if(OtherActor->IsA(AAnswerBlock::StaticClass()))
+	{
+		GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Answer Block"));
+
+		QuizAnswer = Cast<AAnswerBlock>(OtherActor)->GetAnswer();
+	}
 }
 
 void ATutorialManager::CheckProgress()
@@ -35,6 +57,7 @@ void ATutorialManager::CheckProgress()
 		{
 			TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
 			CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+			SetupTask();
 		}
 		break;
 	case ETutorialTaskType::Follow:
@@ -47,6 +70,7 @@ void ATutorialManager::CheckProgress()
 		{
 			TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
 			CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+			SetupTask();
 		}
 		break;
 	case ETutorialTaskType::Quiz:
@@ -55,6 +79,17 @@ void ATutorialManager::CheckProgress()
 			TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
 			CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
 			QuizAnswer = "";
+			CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
+			QuizUI->SetQuizNumber(CurrentQuizQuestion);
+			QuizUI->ShowImage(false);
+			SetupTask();
+		}
+		else
+		{
+			if(QuizAnswer != "")
+			{
+				
+			}
 		}
 		break;
 	case ETutorialTaskType::Customers:
@@ -62,8 +97,34 @@ void ATutorialManager::CheckProgress()
 	{
 		TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
 		CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+		SetupTask();
 	}
 		break;
+	default: ;
+	}
+	
+}
+
+void ATutorialManager::SetupTask()
+{
+	CustomerManager->AllowCustomers(TutorialTasks[CurrentTaskNumber].bAllowCustomers);
+	switch (TutorialTasks[CurrentTaskNumber].TutorialTaskType)
+	{
+	case ETutorialTaskType::Slides: break;
+	case ETutorialTaskType::Follow:
+		NPCHelper->MoveToLocation(*LocationMap.Find(TutorialTasks[CurrentTaskNumber].TargetLocation));
+		break;
+	case ETutorialTaskType::Quiz:
+		QuizUI->ShowImage(true);
+		for(int i = 0; i < QuizQuestions[CurrentQuizQuestion].PotentialAnswers.Num();i++)
+		{
+			AnswerBlocks[i]->SetAnswer(QuizQuestions[CurrentQuizQuestion].PotentialAnswers[i]);
+			AnswerBlocks[i]->SetActorLocation(BlocksSpawnPoint->GetActorLocation());
+			AnswerBlocks[i]->SetHidden(false);
+			AnswerBlocks[i]->SetActorEnableCollision(true);
+		}
+		break;
+	case ETutorialTaskType::Customers: break;
 	default: ;
 	}
 }

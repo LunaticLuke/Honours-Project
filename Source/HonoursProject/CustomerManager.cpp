@@ -44,18 +44,22 @@ void ACustomerManager::BeginPlay()
 	RequestUIClass = Cast<UCustomerRequestUI>(WidgetComponent->GetWidget());
 	RequestUIClass->SetCustomerRequest("");
 	RequestUIClass->SetCustomerFeedback("");
-	
-	SpawnCustomer();
-	Customer->MoveToCounter();
+	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomerManager::SpawnCustomer,5.0f,true,5.0f);
+	Customer->SetHidden(true);
+	Customer->SetActorEnableCollision(false);
 }
 
 void ACustomerManager::SpawnCustomer()
 {
-	if(CurrentRequestNumber < Requests.Num())
+	if(CurrentRequestNumber < Requests.Num() && bCustomerCanEnter && !bCustomerAlreadyInShop)
 	{
 		Customer->SetRequest(Requests[CurrentRequestNumber]);
 		RequestUIClass->SetCustomerRequest(Requests[CurrentRequestNumber]->CustomerRequestDialogue);
+		Customer->MoveToCounter();
+		bCustomerAlreadyInShop = false;
 		CurrentRequestNumber++;
+		Customer->SetHidden(false);
+		Customer->SetActorEnableCollision(true);
 		//Customer->VariableCheck();
 	}
 }
@@ -80,5 +84,10 @@ void ACustomerManager::Tick(float DeltaTime)
 int ACustomerManager::GetServedCustomers()
 {
 	return ServedCustomers;
+}
+
+void ACustomerManager::AllowCustomers(bool bAllow)
+{
+	bCustomerCanEnter = bAllow;
 }
 

@@ -39,7 +39,18 @@ protected:
 	UFUNCTION()
 	void PreviousSlide();
 	
+	bool bQuizSlides = false;
 
+
+	int CurrentQuestionNumber = 0;
+	UPROPERTY(EditAnywhere)
+	TArray<UTexture2D*> QuizSlides;
 public:
 	int GetCurrentSlideNumber();
+
+	void SetQuiz(bool bIsQuiz);
+
+	void SetQuizNumber(int QuestionNumber);
+
+	void ShowImage(bool bShow);
 };

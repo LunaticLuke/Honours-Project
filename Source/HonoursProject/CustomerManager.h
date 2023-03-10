@@ -44,9 +44,17 @@ protected:
 	UCustomerRequestUI* RequestUIClass;
 
 	int ServedCustomers = 0;
+	
+	bool bCustomerCanEnter = false;
+
+	bool bCustomerAlreadyInShop = false;
+	
+	FTimerHandle Ticker;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	int GetServedCustomers();
+
+	void AllowCustomers(bool bAllow);
 };
