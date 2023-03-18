@@ -33,6 +33,7 @@ void ATutorialManager::BeginPlay()
 	QuizUI = Cast<UTutorialUI>(QuizWidgetComponent->GetWidget());
 	QuizUI->SetQuiz(true);
 	AnswerBoxMesh->OnComponentBeginOverlap.AddDynamic(this,&ATutorialManager::OnParameterOverlap);
+	SetupTask();
 }
 
 void ATutorialManager::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -107,6 +108,11 @@ void ATutorialManager::CheckProgress()
 
 void ATutorialManager::SetupTask()
 {
+	for(int i = 0; i < AnswerBlocks.Num();i++)
+	{
+		AnswerBlocks[i]->SetActorHiddenInGame(true);
+		AnswerBlocks[i]->SetActorEnableCollision(false);
+	}
 	CustomerManager->AllowCustomers(TutorialTasks[CurrentTaskNumber].bAllowCustomers);
 	switch (TutorialTasks[CurrentTaskNumber].TutorialTaskType)
 	{
@@ -120,7 +126,7 @@ void ATutorialManager::SetupTask()
 		{
 			AnswerBlocks[i]->SetAnswer(QuizQuestions[CurrentQuizQuestion].PotentialAnswers[i]);
 			AnswerBlocks[i]->SetActorLocation(BlocksSpawnPoint->GetActorLocation());
-			AnswerBlocks[i]->SetHidden(false);
+			AnswerBlocks[i]->SetActorHiddenInGame(false);
 			AnswerBlocks[i]->SetActorEnableCollision(true);
 		}
 		break;

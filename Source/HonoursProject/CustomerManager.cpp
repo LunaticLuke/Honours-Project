@@ -45,7 +45,7 @@ void ACustomerManager::BeginPlay()
 	RequestUIClass->SetCustomerRequest("");
 	RequestUIClass->SetCustomerFeedback("");
 	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomerManager::SpawnCustomer,5.0f,true,5.0f);
-	Customer->SetHidden(true);
+	Customer->SetActorHiddenInGame(true);
 	Customer->SetActorEnableCollision(false);
 }
 
@@ -58,7 +58,7 @@ void ACustomerManager::SpawnCustomer()
 		Customer->MoveToCounter();
 		bCustomerAlreadyInShop = false;
 		CurrentRequestNumber++;
-		Customer->SetHidden(false);
+		Customer->SetActorHiddenInGame(false);
 		Customer->SetActorEnableCollision(true);
 		//Customer->VariableCheck();
 	}

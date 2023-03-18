@@ -81,9 +81,6 @@ struct FQuizQuestion
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere)
-	FString Answer;
-	
-	UPROPERTY(EditAnywhere)
 	TArray<FString> PotentialAnswers;
 	
 };
