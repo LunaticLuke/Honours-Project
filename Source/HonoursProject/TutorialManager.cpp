@@ -51,59 +51,134 @@ void ATutorialManager::OnParameterOverlap(UPrimitiveComponent* OverlappedCompone
 void ATutorialManager::CheckProgress()
 {
 	float NPCDistance,PlayerDistance;
-	switch (TutorialTasks[CurrentTaskNumber].TutorialTaskType)
+	if(!bActiveAction)
 	{
-	case ETutorialTaskType::Slides:
-		if(TutorialUI->GetCurrentSlideNumber() >= TutorialTasks[CurrentTaskNumber].TargetSlideNumber)
+		switch (TutorialTasks[CurrentTaskNumber].TutorialTaskType)
 		{
-			TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
-			CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
-			SetupTask();
-		}
-		break;
-	case ETutorialTaskType::Follow:
-		AActor* TargetLocation;
-		TargetLocation = *LocationMap.Find(TutorialTasks[CurrentTaskNumber].TargetLocation);
-		NPCDistance = FVector::Distance(NPCHelper->GetActorLocation(),TargetLocation->GetActorLocation());
-		PlayerDistance = FVector::Distance(UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetActorLocation(),NPCHelper->GetActorLocation());
-
-		if(NPCDistance <= 200.0f && PlayerDistance <= 200.0f)
-		{
-			TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
-			CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
-			SetupTask();
-		}
-		break;
-	case ETutorialTaskType::Quiz:
-		if(QuizAnswer == TutorialTasks[CurrentTaskNumber].CorrectAnswer)
-		{
-			TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
-			CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
-			QuizAnswer = "";
-			CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
-			QuizUI->SetQuizNumber(CurrentQuizQuestion);
-			QuizUI->ShowImage(false);
-			SetupTask();
-		}
-		else
-		{
-			if(QuizAnswer != "")
+		case ETutorialTaskType::Slides:
+			//If the current slide number is greater than the desired slide number, task is fulfilled.
+			if(TutorialUI->GetCurrentSlideNumber() >= TutorialTasks[CurrentTaskNumber].TargetSlideNumber )
 			{
+				//If this task isn't marked as completed.
+				if(!TutorialTasks[CurrentTaskNumber].bCompletedTask)
+				{
+					//If this task has a post task action, this needs to be completed before advancing to the next task
+					if(TutorialTasks[CurrentTaskNumber].bPostTaskAction)
+					{
+						CarryOutPostTaskAction();
+					}
+					else //Not post task action so just move onto the next task
+					{
+						TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
+						CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+						SetupTask();
+					}
+				}
+				else //Post task action completed
+				{
+					CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+					SetupTask();
+				}
 				
 			}
+			
+			
+			break;
+		case ETutorialTaskType::Follow:
+			AActor* TargetLocation;
+			TargetLocation = *LocationMap.Find(TutorialTasks[CurrentTaskNumber].TargetLocation);
+			NPCDistance = FVector::Distance(NPCHelper->GetActorLocation(),TargetLocation->GetActorLocation());
+			PlayerDistance = FVector::Distance(UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetActorLocation(),NPCHelper->GetActorLocation());
+
+			if(NPCDistance <= 200.0f && PlayerDistance <= 200.0f)
+			{
+				if(!TutorialTasks[CurrentTaskNumber].bCompletedTask)
+				{
+					//If this task has a post task action, this needs to be completed before advancing to the next task
+					if(TutorialTasks[CurrentTaskNumber].bPostTaskAction)
+					{
+						CarryOutPostTaskAction();
+					}
+					else //Not post task action so just move onto the next task
+						{
+						TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
+						CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+						SetupTask();
+						}
+				}
+				else //Post task action completed
+					{
+					CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+					SetupTask();
+					}
+			}
+			break;
+		case ETutorialTaskType::Quiz:
+			if(QuizAnswer == TutorialTasks[CurrentTaskNumber].CorrectAnswer)
+			{
+				if(!TutorialTasks[CurrentTaskNumber].bCompletedTask)
+				{
+					//If this task has a post task action, this needs to be completed before advancing to the next task
+					if(TutorialTasks[CurrentTaskNumber].bPostTaskAction)
+					{
+						CarryOutPostTaskAction();
+					}
+					else //Not post task action so just move onto the next task
+						{
+						TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
+						CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+						SetupTask();
+						QuizAnswer = "";
+						CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
+						QuizUI->SetQuizNumber(CurrentQuizQuestion);
+						QuizUI->ShowImage(false);
+						}
+				}
+				else //Post task action completed
+					{
+					CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+					SetupTask();
+					QuizAnswer = "";
+					CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
+					QuizUI->SetQuizNumber(CurrentQuizQuestion);
+					QuizUI->ShowImage(false);
+					}
+			}
+			else
+			{
+				if(QuizAnswer != "")
+				{
+				
+				}
+			}
+			break;
+		case ETutorialTaskType::Customers:
+			if(CustomerManager->GetServedCustomers() >= TutorialTasks[CurrentTaskNumber].TargetCustomersServed)
+			{
+				if(!TutorialTasks[CurrentTaskNumber].bCompletedTask)
+				{
+					//If this task has a post task action, this needs to be completed before advancing to the next task
+					if(TutorialTasks[CurrentTaskNumber].bPostTaskAction)
+					{
+						CarryOutPostTaskAction();
+					}
+					else //Not post task action so just move onto the next task
+						{
+						TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
+						CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+						SetupTask();
+						}
+				}
+				else //Post task action completed
+					{
+					CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
+					SetupTask();
+					}
+			}
+			break;
+		default: ;
 		}
-		break;
-	case ETutorialTaskType::Customers:
-	if(CustomerManager->GetServedCustomers() >= TutorialTasks[CurrentTaskNumber].TargetCustomersServed)
-	{
-		TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
-		CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
-		SetupTask();
 	}
-		break;
-	default: ;
-	}
-	
 }
 
 void ATutorialManager::SetupTask()
@@ -133,6 +208,109 @@ void ATutorialManager::SetupTask()
 	case ETutorialTaskType::Customers: break;
 	default: ;
 	}
+	if(TutorialTasks[CurrentTaskNumber].bPreTaskAction)
+	{
+		CarryOutPreTaskAction();
+	}
+}
+
+void ATutorialManager::CarryOutPreTaskAction()
+{
+	bActiveAction = true;
+	float Timer = TutorialTasks[CurrentTaskNumber].PreTaskAction.LengthOfAction;
+	switch (TutorialTasks[CurrentTaskNumber].PreTaskAction.TypeOfAction) {
+
+	case ENPCActionType::Talking:
+		NPCHelper->bTalking = true;
+		ShowPreDialogue();
+		break;
+	case ENPCActionType::PickUpItem:
+		NPCHelper->bPickingUp = true;
+		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPreTaskAction,Timer,false,Timer);
+		break;
+	case ENPCActionType::DropItem:
+		NPCHelper->bPuttingDown = true;
+		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPreTaskAction,Timer,false,Timer);
+		break;
+	default: ;
+	}
+	
+
+}
+
+void ATutorialManager::CarryOutPostTaskAction()
+{
+	bActiveAction = true;
+	float Timer = TutorialTasks[CurrentTaskNumber].PostTaskAction.LengthOfAction;
+	switch (TutorialTasks[CurrentTaskNumber].PostTaskAction.TypeOfAction) {
+
+	case ENPCActionType::Talking:
+		NPCHelper->bTalking = true;
+		ShowPostDialogue();
+		break;
+	case ENPCActionType::PickUpItem:
+		NPCHelper->bPickingUp = true;
+		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPostTaskAction,Timer,false,Timer);
+		break;
+	case ENPCActionType::DropItem:
+		NPCHelper->bPuttingDown = true;
+		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPostTaskAction,Timer,false,Timer);
+		break;
+	default: ;
+	}
+}
+
+void ATutorialManager::ShowPreDialogue()
+{
+	if(CurrentDialogueNumber < TutorialTasks[CurrentTaskNumber].PreTaskAction.Dialogue.Num())
+	{
+		float Timer = TutorialTasks[CurrentTaskNumber].PreTaskAction.TimeDialogueOnScreen[CurrentDialogueNumber];
+		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::ShowPreDialogue,Timer,false,Timer);
+		GEngine->AddOnScreenDebugMessage(0,Timer,FColor::Cyan,TutorialTasks[CurrentTaskNumber].PreTaskAction.Dialogue[CurrentDialogueNumber]);
+		CurrentDialogueNumber++;
+	}
+	else
+	{
+		bActiveAction = false;
+		CurrentDialogueNumber = 0;
+		NPCHelper->bTalking = false;
+	}
+}
+
+void ATutorialManager::ShowPostDialogue()
+{
+	if(CurrentDialogueNumber < TutorialTasks[CurrentTaskNumber].PostTaskAction.Dialogue.Num())
+	{
+		float Timer = TutorialTasks[CurrentTaskNumber].PostTaskAction.TimeDialogueOnScreen[CurrentDialogueNumber];
+		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::ShowPostDialogue,Timer,false,Timer);
+		GEngine->AddOnScreenDebugMessage(0,Timer,FColor::Cyan,TutorialTasks[CurrentTaskNumber].PostTaskAction.Dialogue[CurrentDialogueNumber]);
+		CurrentDialogueNumber++;
+	}
+	else
+	{
+		bActiveAction = false;
+		CurrentDialogueNumber = 0;
+		TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
+		NPCHelper->bTalking = false;
+	}
+}
+
+
+void ATutorialManager::EndPreTaskAction()
+{
+	bActiveAction = false;
+	NPCHelper->bTalking = false;
+	NPCHelper->bPickingUp = false;
+	NPCHelper->bTalking = false;
+}
+
+void ATutorialManager::EndPostTaskAction()
+{
+	bActiveAction = false;
+	TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
+	NPCHelper->bTalking = false;
+	NPCHelper->bPickingUp = false;
+	NPCHelper->bTalking = false;
 }
 
 // Called every frame

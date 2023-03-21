@@ -12,6 +12,7 @@ struct FVariableRequest;
 class ATargetPoint;
 
 
+
 UCLASS()
 class HONOURSPROJECT_API ACustomer : public ACharacter
 {
@@ -56,6 +57,8 @@ protected:
 	FString GetParameterTextValue(AFunctionNode* NodeToCheck, int Index);
 
 	bool CheckInnerParameter(AActor* NodeToCheck, int Index, double ValueToCheck, FString TextToCheck);
+
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -40,6 +40,32 @@ enum class ETutorialTaskType
 	Customers
 };
 
+UENUM()
+enum class ENPCActionType
+{
+	Talking,
+	PickUpItem,
+	DropItem
+};
+
+USTRUCT()
+struct FNPCAction
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere)
+	ENPCActionType TypeOfAction;
+	UPROPERTY(EditAnywhere)
+	TArray<FString> Dialogue;
+	UPROPERTY(EditAnywhere)
+	TArray<float> TimeDialogueOnScreen;
+	UPROPERTY(EditAnywhere)
+	AActor* ItemToPickup;
+	UPROPERTY(EditAnywhere)
+	AActor* ItemToDrop;
+	UPROPERTY(EditAnywhere)
+	float LengthOfAction;
+};
+
 USTRUCT()
 struct FTutorialTask
 {
@@ -73,6 +99,18 @@ struct FTutorialTask
 	//Has this task been completed?
 	UPROPERTY(EditAnywhere)
 	bool bCompletedTask = false;
+	
+	UPROPERTY(EditAnywhere)
+	bool bPreTaskAction = false;
+	
+	UPROPERTY(EditAnywhere)
+	FNPCAction PreTaskAction;
+	
+	UPROPERTY(EditAnywhere)
+	bool bPostTaskAction = false;
+	
+	UPROPERTY(EditAnywhere)
+	FNPCAction PostTaskAction;
 };
 
 USTRUCT()
@@ -148,6 +186,31 @@ protected:
 	int CurrentQuizQuestion = 0;
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* AnswerBoxMesh;
+
+	FTimerHandle ActionTimer;
+
+	UFUNCTION()
+	void CarryOutPreTaskAction();
+	
+	UFUNCTION()
+	void CarryOutPostTaskAction();
+	
+	UFUNCTION()
+	void ShowPreDialogue();
+
+	UFUNCTION()
+	void ShowPostDialogue();
+	
+	UFUNCTION()
+	void EndPreTaskAction();
+	
+	UFUNCTION()
+	void EndPostTaskAction();
+	
+	bool bActiveAction = false;
+
+	int CurrentDialogueNumber = 0;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

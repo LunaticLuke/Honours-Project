@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "NPCHelper.generated.h"
 
+
+
+
 UCLASS()
 class HONOURSPROJECT_API ANPCHelper : public ACharacter
 {
@@ -14,7 +17,13 @@ class HONOURSPROJECT_API ANPCHelper : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ANPCHelper();
-
+	UPROPERTY(BlueprintReadWrite)
+	bool bTalking = false;
+	UPROPERTY(BlueprintReadWrite)
+	bool bPickingUp = false;
+	UPROPERTY(BlueprintReadWrite)
+	bool bPuttingDown = false;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
