@@ -19,7 +19,7 @@ AVariableNodeActor::AVariableNodeActor()
 void AVariableNodeActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	NodeStaticMesh->SetMaterial(0,*Materials.Find(VariableDataType));
 }
 
 // Called every frame
@@ -32,6 +32,7 @@ void AVariableNodeActor::Tick(float DeltaTime)
 void AVariableNodeActor::SetDataType(NodeDataTypes TypeToSet)
 {
 	VariableDataType = TypeToSet;
+	NodeStaticMesh->SetMaterial(0,*Materials.Find(VariableDataType));
 }
 
 NodeDataTypes AVariableNodeActor::GetDataType()

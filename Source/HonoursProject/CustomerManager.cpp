@@ -56,7 +56,7 @@ void ACustomerManager::SpawnCustomer()
 		Customer->SetRequest(Requests[CurrentRequestNumber]);
 		RequestUIClass->SetCustomerRequest(Requests[CurrentRequestNumber]->CustomerRequestDialogue);
 		Customer->MoveToCounter();
-		bCustomerAlreadyInShop = false;
+		bCustomerAlreadyInShop = true;
 		CurrentRequestNumber++;
 		Customer->SetActorHiddenInGame(false);
 		Customer->SetActorEnableCollision(true);
@@ -67,10 +67,13 @@ void ACustomerManager::SpawnCustomer()
 void ACustomerManager::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
-	if(OtherActor->IsA(APotion::StaticClass()))
+	if(OtherActor->IsA(APotion::StaticClass()) && bCustomerAlreadyInShop)
 	{
-		Customer->SetPotion(Cast<APotion>(OtherActor));
-		Customer->VariableCheck();
+		if(OtherActor->GetRootComponent()->IsSimulatingPhysics()) //Stops potion from being submitted whilst in the players hand, must have let go 
+		{
+			Customer->SetPotion(Cast<APotion>(OtherActor));
+			Customer->VariableCheck();
+		}
 	}
 }
 

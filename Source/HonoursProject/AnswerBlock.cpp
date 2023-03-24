@@ -22,7 +22,7 @@ AAnswerBlock::AAnswerBlock()
 void AAnswerBlock::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	StartingLocation = GetActorLocation();
 }
 
 // Called every frame
@@ -41,5 +41,10 @@ void AAnswerBlock::SetAnswer(FString AnswerToSet)
 {
 	Answer = AnswerToSet;
 	TextComponent->SetText(FText::FromString(AnswerToSet));
+}
+
+void AAnswerBlock::ResetBlockLocation()
+{
+	SetActorLocation(StartingLocation);
 }
 

@@ -314,7 +314,31 @@ void ACustomer::VariableCheck()
 	if(bCorrectPotion)
 	{
 		GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Correct"));
+		bPickUpPotion = true;
+		GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomer::EndAnimation,2.33f,false,2.33f);
+	}
+	else
+	{
+		bShakeHead = true;
+		GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomer::EndAnimation,1.6f,false,1.6f);
+	}
+}
+
+void ACustomer::EndAnimation()
+{
+	if(bPickUpPotion)
+	{
 		MoveToExit();
 	}
+	bPickUpPotion = false;
+	bShakeHead = false;
+}
+
+void ACustomer::PickupPotion()
+{
+	Cast<UPrimitiveComponent>(CurrentPotion->GetRootComponent())->SetSimulatePhysics(false);
+	CurrentPotion->SetActorEnableCollision(false);
+	CurrentPotion->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,TEXT("Hand"));
+	//Item->SetActorLocation(GetActorLocation());
 }
 

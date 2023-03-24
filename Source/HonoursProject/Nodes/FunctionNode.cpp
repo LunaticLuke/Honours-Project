@@ -21,6 +21,7 @@ void AFunctionNode::BeginPlay()
 	Super::BeginPlay();
 	Parameter1Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
 	Parameter2Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
+	NodeStaticMesh->SetMaterial(0,*Materials.Find(ReturnType));
 }
 
 void AFunctionNode::Tick(float DeltaSeconds)

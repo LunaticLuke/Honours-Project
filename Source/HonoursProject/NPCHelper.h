@@ -7,8 +7,7 @@
 #include "NPCHelper.generated.h"
 
 
-
-
+class USpeechBubbleUI;
 UCLASS()
 class HONOURSPROJECT_API ANPCHelper : public ACharacter
 {
@@ -27,7 +26,16 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* WidgetComponent;
+	UPROPERTY(EditAnywhere)
+	USpeechBubbleUI* SpeechBubbleUI;
 
+	FString UnassignedText = "";
+
+	AActor* ItemToInteractWith;
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -37,4 +45,11 @@ public:
 
 	void MoveToLocation(AActor* LocationToTravelTo);
 
+	void SetText(FString TextToSet);
+
+	void ShowUI(bool bShow);
+
+	void SetInteractItem(AActor* ItemToSet);
+	UFUNCTION(BlueprintCallable)
+	void PickUpDrop();
 };

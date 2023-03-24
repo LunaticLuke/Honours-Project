@@ -26,6 +26,8 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class UTextRenderComponent* TextComponent;
+
+	FVector StartingLocation;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -33,4 +35,6 @@ public:
 	FString GetAnswer();
 
 	void SetAnswer(FString AnswerToSet);
+
+	void ResetBlockLocation();
 };

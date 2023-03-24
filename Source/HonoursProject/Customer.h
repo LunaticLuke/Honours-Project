@@ -22,6 +22,10 @@ public:
 	// Sets default values for this character's properties
 	ACustomer();
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bShakeHead = false;
+	UPROPERTY(BlueprintReadWrite)
+	bool bPickUpPotion = false;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,6 +62,8 @@ protected:
 
 	bool CheckInnerParameter(AActor* NodeToCheck, int Index, double ValueToCheck, FString TextToCheck);
 
+
+	FTimerHandle Ticker;
 	
 public:	
 	// Called every frame
@@ -77,6 +83,12 @@ public:
 	void SetPotion(APotion* PotionToSet);
 
 	void VariableCheck();
+
+	UFUNCTION()
+	void EndAnimation();
+
+	UFUNCTION(BlueprintCallable)
+	void PickupPotion();
 };
 
 

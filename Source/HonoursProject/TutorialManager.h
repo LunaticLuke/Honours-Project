@@ -59,9 +59,7 @@ struct FNPCAction
 	UPROPERTY(EditAnywhere)
 	TArray<float> TimeDialogueOnScreen;
 	UPROPERTY(EditAnywhere)
-	AActor* ItemToPickup;
-	UPROPERTY(EditAnywhere)
-	AActor* ItemToDrop;
+	AActor* ItemToInteract;
 	UPROPERTY(EditAnywhere)
 	float LengthOfAction;
 };
@@ -201,15 +199,20 @@ protected:
 	UFUNCTION()
 	void ShowPostDialogue();
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void EndPreTaskAction();
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void EndPostTaskAction();
 	
 	bool bActiveAction = false;
 
+	bool bPreTaskAction = false;
+
+	bool bPostTaskAction = false;
+
 	int CurrentDialogueNumber = 0;
+
 
 public:	
 	// Called every frame

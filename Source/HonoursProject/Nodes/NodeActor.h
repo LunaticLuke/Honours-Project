@@ -8,8 +8,7 @@
 #include "NodeActor.generated.h"
 
 
-
-
+enum class NodeDataTypes : uint8;
 UCLASS()
 class HONOURSPROJECT_API ANodeActor : public AActor
 {
@@ -35,7 +34,9 @@ protected:
 	class UTextRenderComponent* NodeTextComponent;
 
 	virtual void DisplayText();
-
+	
+	UPROPERTY(EditAnywhere)
+	TMap<NodeDataTypes,UMaterialInterface*> Materials;
 
 public:	
 	// Called every frame

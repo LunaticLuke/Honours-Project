@@ -6,6 +6,7 @@
 #include "AnswerBlock.h"
 #include "CustomerManager.h"
 #include "NPCHelper.h"
+#include "SpeechBubbleUI.h"
 #include "TutorialUI.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -127,28 +128,28 @@ void ATutorialManager::CheckProgress()
 						{
 						TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
 						CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
-						SetupTask();
 						QuizAnswer = "";
 						CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
 						QuizUI->SetQuizNumber(CurrentQuizQuestion);
 						QuizUI->ShowImage(false);
+						SetupTask();
 						}
 				}
 				else //Post task action completed
 					{
 					CurrentTaskNumber = FMath::Clamp(CurrentTaskNumber + 1,0,TutorialTasks.Num() - 1);
-					SetupTask();
 					QuizAnswer = "";
 					CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
 					QuizUI->SetQuizNumber(CurrentQuizQuestion);
 					QuizUI->ShowImage(false);
+					SetupTask();
 					}
 			}
 			else
 			{
 				if(QuizAnswer != "")
 				{
-				
+					QuizAnswer = "";
 				}
 			}
 			break;
@@ -187,6 +188,7 @@ void ATutorialManager::SetupTask()
 	{
 		AnswerBlocks[i]->SetActorHiddenInGame(true);
 		AnswerBlocks[i]->SetActorEnableCollision(false);
+		Cast<UPrimitiveComponent>(AnswerBlocks[i]->GetRootComponent())->SetEnableGravity(false);
 	}
 	CustomerManager->AllowCustomers(TutorialTasks[CurrentTaskNumber].bAllowCustomers);
 	switch (TutorialTasks[CurrentTaskNumber].TutorialTaskType)
@@ -200,9 +202,11 @@ void ATutorialManager::SetupTask()
 		for(int i = 0; i < QuizQuestions[CurrentQuizQuestion].PotentialAnswers.Num();i++)
 		{
 			AnswerBlocks[i]->SetAnswer(QuizQuestions[CurrentQuizQuestion].PotentialAnswers[i]);
-			AnswerBlocks[i]->SetActorLocation(BlocksSpawnPoint->GetActorLocation());
+			AnswerBlocks[i]->ResetBlockLocation();
 			AnswerBlocks[i]->SetActorHiddenInGame(false);
 			AnswerBlocks[i]->SetActorEnableCollision(true);
+			Cast<UPrimitiveComponent>(AnswerBlocks[i]->GetRootComponent())->SetEnableGravity(true);
+			
 		}
 		break;
 	case ETutorialTaskType::Customers: break;
@@ -217,19 +221,24 @@ void ATutorialManager::SetupTask()
 void ATutorialManager::CarryOutPreTaskAction()
 {
 	bActiveAction = true;
+	bPreTaskAction = true;
+	
 	float Timer = TutorialTasks[CurrentTaskNumber].PreTaskAction.LengthOfAction;
 	switch (TutorialTasks[CurrentTaskNumber].PreTaskAction.TypeOfAction) {
 
 	case ENPCActionType::Talking:
 		NPCHelper->bTalking = true;
+		NPCHelper->ShowUI(true);
 		ShowPreDialogue();
 		break;
 	case ENPCActionType::PickUpItem:
+		NPCHelper->SetInteractItem(TutorialTasks[CurrentTaskNumber].PreTaskAction.ItemToInteract);
 		NPCHelper->bPickingUp = true;
 		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPreTaskAction,Timer,false,Timer);
 		break;
 	case ENPCActionType::DropItem:
 		NPCHelper->bPuttingDown = true;
+		NPCHelper->SetInteractItem(TutorialTasks[CurrentTaskNumber].PreTaskAction.ItemToInteract);
 		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPreTaskAction,Timer,false,Timer);
 		break;
 	default: ;
@@ -241,19 +250,24 @@ void ATutorialManager::CarryOutPreTaskAction()
 void ATutorialManager::CarryOutPostTaskAction()
 {
 	bActiveAction = true;
+	bPostTaskAction = true;
+	
 	float Timer = TutorialTasks[CurrentTaskNumber].PostTaskAction.LengthOfAction;
 	switch (TutorialTasks[CurrentTaskNumber].PostTaskAction.TypeOfAction) {
 
 	case ENPCActionType::Talking:
 		NPCHelper->bTalking = true;
 		ShowPostDialogue();
+		NPCHelper->ShowUI(true);
 		break;
 	case ENPCActionType::PickUpItem:
 		NPCHelper->bPickingUp = true;
+		NPCHelper->SetInteractItem(TutorialTasks[CurrentTaskNumber].PostTaskAction.ItemToInteract);
 		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPostTaskAction,Timer,false,Timer);
 		break;
 	case ENPCActionType::DropItem:
 		NPCHelper->bPuttingDown = true;
+		NPCHelper->SetInteractItem(TutorialTasks[CurrentTaskNumber].PostTaskAction.ItemToInteract);
 		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::EndPostTaskAction,Timer,false,Timer);
 		break;
 	default: ;
@@ -266,14 +280,16 @@ void ATutorialManager::ShowPreDialogue()
 	{
 		float Timer = TutorialTasks[CurrentTaskNumber].PreTaskAction.TimeDialogueOnScreen[CurrentDialogueNumber];
 		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::ShowPreDialogue,Timer,false,Timer);
-		GEngine->AddOnScreenDebugMessage(0,Timer,FColor::Cyan,TutorialTasks[CurrentTaskNumber].PreTaskAction.Dialogue[CurrentDialogueNumber]);
+		NPCHelper->SetText(TutorialTasks[CurrentTaskNumber].PreTaskAction.Dialogue[CurrentDialogueNumber]);
 		CurrentDialogueNumber++;
 	}
 	else
 	{
 		bActiveAction = false;
+		bPreTaskAction = false;
 		CurrentDialogueNumber = 0;
 		NPCHelper->bTalking = false;
+		NPCHelper->ShowUI(false);
 	}
 }
 
@@ -283,15 +299,17 @@ void ATutorialManager::ShowPostDialogue()
 	{
 		float Timer = TutorialTasks[CurrentTaskNumber].PostTaskAction.TimeDialogueOnScreen[CurrentDialogueNumber];
 		GetWorld()->GetTimerManager().SetTimer(ActionTimer,this, &ATutorialManager::ShowPostDialogue,Timer,false,Timer);
-		GEngine->AddOnScreenDebugMessage(0,Timer,FColor::Cyan,TutorialTasks[CurrentTaskNumber].PostTaskAction.Dialogue[CurrentDialogueNumber]);
+		NPCHelper->SetText(TutorialTasks[CurrentTaskNumber].PostTaskAction.Dialogue[CurrentDialogueNumber]);
 		CurrentDialogueNumber++;
 	}
 	else
 	{
 		bActiveAction = false;
+		bPostTaskAction = false;
 		CurrentDialogueNumber = 0;
 		TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
 		NPCHelper->bTalking = false;
+		NPCHelper->ShowUI(false);
 	}
 }
 
@@ -299,19 +317,22 @@ void ATutorialManager::ShowPostDialogue()
 void ATutorialManager::EndPreTaskAction()
 {
 	bActiveAction = false;
+	bPreTaskAction = false;
 	NPCHelper->bTalking = false;
 	NPCHelper->bPickingUp = false;
-	NPCHelper->bTalking = false;
+	NPCHelper->bPuttingDown = false;
 }
 
 void ATutorialManager::EndPostTaskAction()
 {
 	bActiveAction = false;
+	bPostTaskAction = false;
 	TutorialTasks[CurrentTaskNumber].bCompletedTask = true;
 	NPCHelper->bTalking = false;
 	NPCHelper->bPickingUp = false;
-	NPCHelper->bTalking = false;
+	NPCHelper->bPuttingDown = false;
 }
+
 
 // Called every frame
 void ATutorialManager::Tick(float DeltaTime)
