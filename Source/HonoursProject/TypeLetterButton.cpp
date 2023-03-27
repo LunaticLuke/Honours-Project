@@ -17,37 +17,44 @@ if(!MachineRef)
 {
 	GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Red,TEXT("Missing Reference"));
 }
-	
-	if(bLetter)
+
+	if(LowerCaseCharacterToAdd == "Caps")
 	{
-		if(MachineRef->bChoosingVariableName)
-		{
-			if(MachineRef->bCapsLock)
-			{
-				MachineRef->AddToVariableName(UpperCaseCharacterToAdd);
-			}
-			else
-			{
-				MachineRef->AddToVariableName(LowerCaseCharacterToAdd);
-			}
-		}
-		else if(MachineRef->bChoosingVariableStartingValue)
-		{
-			if(MachineRef->bCapsLock)
-			{
-				MachineRef->AddToVariableStartingValue(UpperCaseCharacterToAdd,false);
-			}
-			else
-			{
-				MachineRef->AddToVariableStartingValue(LowerCaseCharacterToAdd,false);
-			}
-		}
+		MachineRef->bCapsLock = !MachineRef->bCapsLock;
 	}
 	else
 	{
-		if(MachineRef->bChoosingVariableStartingValue)
+		if(bLetter)
 		{
-			MachineRef->AddToVariableStartingValue(NumberToAdd,true);
+			if(MachineRef->bChoosingVariableName)
+			{
+				if(MachineRef->bCapsLock)
+				{
+					MachineRef->AddToVariableName(UpperCaseCharacterToAdd);
+				}
+				else
+				{
+					MachineRef->AddToVariableName(LowerCaseCharacterToAdd);
+				}
+			}
+			else if(MachineRef->bChoosingVariableStartingValue)
+			{
+				if(MachineRef->bCapsLock)
+				{
+					MachineRef->AddToVariableStartingValue(UpperCaseCharacterToAdd,false);
+				}
+				else
+				{
+					MachineRef->AddToVariableStartingValue(LowerCaseCharacterToAdd,false);
+				}
+			}
+		}
+		else
+		{
+			if(MachineRef->bChoosingVariableStartingValue)
+			{
+				MachineRef->AddToVariableStartingValue(NumberToAdd,true);
+			}
 		}
 	}
 }

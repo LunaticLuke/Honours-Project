@@ -23,6 +23,7 @@ void AAnswerBlock::BeginPlay()
 {
 	Super::BeginPlay();
 	StartingLocation = GetActorLocation();
+	StartingRotation = GetActorRotation();
 }
 
 // Called every frame
@@ -46,5 +47,6 @@ void AAnswerBlock::SetAnswer(FString AnswerToSet)
 void AAnswerBlock::ResetBlockLocation()
 {
 	SetActorLocation(StartingLocation);
+	SetActorRotation(StartingRotation);
 }
 

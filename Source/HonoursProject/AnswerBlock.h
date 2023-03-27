@@ -28,6 +28,8 @@ protected:
 	class UTextRenderComponent* TextComponent;
 
 	FVector StartingLocation;
+
+	FRotator StartingRotation;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
