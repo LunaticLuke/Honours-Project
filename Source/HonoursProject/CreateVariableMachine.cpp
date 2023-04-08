@@ -144,3 +144,9 @@ void ACreateVariableMachine::Backspace()
 	UIClass->UpdateText(EnumManager::ConvertDataTypeToString(DataTypeToCreate),VariableName,VariableValue);
 }
 
+void ACreateVariableMachine::CapsLock()
+{
+	bCapsLock = !bCapsLock;
+	UIClass->UpdateUI();
+}
+

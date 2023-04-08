@@ -45,16 +45,16 @@ void AWhileLoopNode::ExecuteNode()
 		StringReturn = Manager->GetVariableNode(Parameters[0].VariableNodeActor->GetVariableName())->GetVariableValue();
 		//StringReturn = Parameters[0].VariableNodeActor->GetVariableValue();
 	}
+	
 
-	bool IsRunning = true;
-	int Timer = 0;
+	bool bWhileLoopReachedEnd = false; 
 
-	while(StringReturn ==  "true")
+	//To prevent the player creating an infinite loop, this while loop node will use a large for loop beneath the hood
+	for(int i = 0; i < 5000; i++)
 	{
-
-		for(int i = 0; i < CodeBlock.Num();i++)
+		for(int j = 0; j < CodeBlock.Num();j++)
 		{
-			CodeBlock[i]->ExecuteNode();
+			CodeBlock[j]->ExecuteNode();
 		}
 
 		if(Parameters[0].FunctionNodeActor)
@@ -66,8 +66,21 @@ void AWhileLoopNode::ExecuteNode()
 			StringReturn = Manager->GetVariableNode(Parameters[0].VariableNodeActor->GetVariableName())->GetVariableValue();
 			//StringReturn = Parameters[0].VariableNodeActor->GetVariableValue();
 		}
-		
+
+		if(StringReturn != "true")
+		{
+			//If the condition is no longer true, the while loop would end at this point so break out of this for loop
+			bWhileLoopReachedEnd = true;
+			break;
+		}
 	}
+
+	//If the for loop ran its course without the condition becoming false, assume an infinite loop. None of the questions in the game require this much looping so something has went wrong.
+	if(!bWhileLoopReachedEnd)
+	{
+		bPotentialInfiniteLoop = true;
+	}
+	
 	
 	GEngine->AddOnScreenDebugMessage(3,10.0f,FColor::Yellow,TEXT("Ended While Loop"));
 }

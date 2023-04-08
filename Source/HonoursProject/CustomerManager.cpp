@@ -20,6 +20,8 @@ ACustomerManager::ACustomerManager()
 	SetRootComponent(PotionTriggerZone);
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Request UI"));
+
+	CustomerLeaveZone = CreateDefaultSubobject<UBoxComponent>(TEXT("Customer Leave Point"));
 }
 
 // Called when the game starts or when spawned
@@ -40,6 +42,7 @@ void ACustomerManager::BeginPlay()
 	}
 
 	PotionTriggerZone->OnComponentBeginOverlap.AddDynamic(this,&ACustomerManager::OnParameterOverlap);
+	CustomerLeaveZone->OnComponentBeginOverlap.AddDynamic(this,&ACustomerManager::OnParameterOverlap);
 
 	RequestUIClass = Cast<UCustomerRequestUI>(WidgetComponent->GetWidget());
 	RequestUIClass->SetCustomerRequest("");
@@ -67,12 +70,23 @@ void ACustomerManager::SpawnCustomer()
 void ACustomerManager::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
-	if(OtherActor->IsA(APotion::StaticClass()) && bCustomerAlreadyInShop)
+	if(OverlappedComponent == PotionTriggerZone)
 	{
-		if(OtherActor->GetRootComponent()->IsSimulatingPhysics()) //Stops potion from being submitted whilst in the players hand, must have let go 
+		if(OtherActor->IsA(APotion::StaticClass()) && bCustomerAlreadyInShop)
 		{
-			Customer->SetPotion(Cast<APotion>(OtherActor));
-			Customer->VariableCheck();
+			if(OtherActor->GetRootComponent()->IsSimulatingPhysics()) //Stops potion from being submitted whilst in the players hand, must have let go 
+				{
+				Customer->SetPotion(Cast<APotion>(OtherActor));
+				Customer->VariableCheck();
+				}
+		}
+	}else if(OverlappedComponent == CustomerLeaveZone)
+	{
+		if(OtherActor->IsA(ACustomer::StaticClass()))
+		{
+			Customer->SetActorHiddenInGame(true);
+			Customer->SetActorEnableCollision(false);
+			bCustomerAlreadyInShop = false;
 		}
 	}
 }

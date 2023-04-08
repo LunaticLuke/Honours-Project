@@ -7,7 +7,9 @@
 #include "CustomerManager.h"
 #include "NPCHelper.h"
 #include "SpeechBubbleUI.h"
+#include "Math/UnrealMathUtility.h"
 #include "TutorialUI.h"
+#include "Components/PointLightComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -22,6 +24,8 @@ ATutorialManager::ATutorialManager()
 	QuizWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Quiz UI"));
 
 	AnswerBoxMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Answer Box Mesh"));
+
+	PointLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("Point Light Component"));
 }
 
 // Called when the game starts or when spawned
@@ -35,6 +39,7 @@ void ATutorialManager::BeginPlay()
 	QuizUI->SetQuiz(true);
 	AnswerBoxMesh->OnComponentBeginOverlap.AddDynamic(this,&ATutorialManager::OnParameterOverlap);
 	SetupTask();
+	PointLight->SetIntensity(0.0f);
 }
 
 void ATutorialManager::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -58,7 +63,7 @@ void ATutorialManager::CheckProgress()
 		{
 		case ETutorialTaskType::Slides:
 			//If the current slide number is greater than the desired slide number, task is fulfilled.
-			if(TutorialUI->GetCurrentSlideNumber() >= TutorialTasks[CurrentTaskNumber].TargetSlideNumber )
+			if(TutorialUI->GetCurrentSlideNumber() >= TutorialTasks[CurrentTaskNumber].TargetSlideNumber && TutorialUI->GetCurrentSlideTopic() == TutorialTasks[CurrentTaskNumber].TargetSlideTopic)
 			{
 				//If this task isn't marked as completed.
 				if(!TutorialTasks[CurrentTaskNumber].bCompletedTask)
@@ -132,6 +137,8 @@ void ATutorialManager::CheckProgress()
 						CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
 						QuizUI->SetQuizNumber(CurrentQuizQuestion);
 						QuizUI->ShowImage(false);
+						PointLight->SetLightColor(FLinearColor::Green);
+						bLightLerping = true;
 						SetupTask();
 						}
 				}
@@ -142,6 +149,8 @@ void ATutorialManager::CheckProgress()
 					CurrentQuizQuestion = FMath::Clamp(CurrentQuizQuestion + 1, 0, QuizQuestions.Num() - 1);
 					QuizUI->SetQuizNumber(CurrentQuizQuestion);
 					QuizUI->ShowImage(false);
+					PointLight->SetLightColor(FLinearColor::Green);
+					bLightLerping = true;
 					SetupTask();
 					}
 			}
@@ -150,6 +159,8 @@ void ATutorialManager::CheckProgress()
 				if(QuizAnswer != "")
 				{
 					QuizAnswer = "";
+					PointLight->SetLightColor(FLinearColor::Red);
+					bLightLerping = true;
 				}
 			}
 			break;
@@ -193,7 +204,9 @@ void ATutorialManager::SetupTask()
 	CustomerManager->AllowCustomers(TutorialTasks[CurrentTaskNumber].bAllowCustomers);
 	switch (TutorialTasks[CurrentTaskNumber].TutorialTaskType)
 	{
-	case ETutorialTaskType::Slides: break;
+	case ETutorialTaskType::Slides:
+		TutorialUI->UnlockTopic(TutorialTasks[CurrentTaskNumber].TargetSlideTopic);
+		break;
 	case ETutorialTaskType::Follow:
 		NPCHelper->MoveToLocation(*LocationMap.Find(TutorialTasks[CurrentTaskNumber].TargetLocation));
 		break;
@@ -339,5 +352,27 @@ void ATutorialManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(bLightLerping)
+	{
+		if(lerpNumber < 1.0f)
+		{
+			lerpNumber += DeltaTime;
+			float Intensity = FMath::Lerp(0.0f,5000.0f,lerpNumber);
+			PointLight->SetIntensity(Intensity);
+		}
+		else
+		{
+			bLightLerping = false;
+		}
+	}
+	else
+	{
+		if(lerpNumber > 0.0f)
+		{
+			lerpNumber -= DeltaTime;
+			float Intensity = FMath::Lerp(0.0f,5000.0f,lerpNumber);
+			PointLight->SetIntensity(Intensity);
+		}
+	}
 }
 

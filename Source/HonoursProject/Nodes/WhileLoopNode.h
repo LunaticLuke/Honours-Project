@@ -28,6 +28,8 @@ public:
 
 	virtual void DisplayText() override;
 
+	bool bPotentialInfiniteLoop = false;
+
 protected:
 
 	void CheckCodeBlock();

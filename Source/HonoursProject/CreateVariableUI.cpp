@@ -24,6 +24,17 @@ void UCreateVariableUI::NativeConstruct()
 		if(UTypeLetterButton* Button = Cast<UTypeLetterButton>(Child))
 		{
 			Button->MachineRef = VariableMachine;
+
+			auto childs = Button->GetAllChildren();
+			for (auto Childh : childs)
+			{
+				if(Childh->IsA(UTextBlock::StaticClass()))
+				{
+					Button->SetTextComponent(Cast<UTextBlock>(Childh));
+				}
+			}
+
+			
 			if(Button->bLetter)
 			{
 				KeyboardButtons.Push(Button);
@@ -46,6 +57,7 @@ void UCreateVariableUI::NativeConstruct()
 	SelectVariableValueButton->OnClicked.AddDynamic(this,&UCreateVariableUI::SelectStartingValue);
 	CreateVariableButton->OnClicked.AddDynamic(this,&UCreateVariableUI::CreateVariable);
 	SpacebarKey->OnClicked.AddDynamic(this,&UCreateVariableUI::Space);
+	UpdateUI();
 }
 
 void UCreateVariableUI::SetupButtons(ACreateVariableMachine* Machine)
@@ -148,6 +160,15 @@ void UCreateVariableUI::SelectTrue()
 void UCreateVariableUI::SelectFalse()
 {
 	VariableMachine->AddToVariableStartingValue("false",false);
+}
+
+void UCreateVariableUI::UpdateUI()
+{
+
+	for(int i =0 ; i < KeyboardButtons.Num();i++)
+	{
+		KeyboardButtons[i]->UpdateText();
+	}
 }
 
 void UCreateVariableUI::BackSpace()

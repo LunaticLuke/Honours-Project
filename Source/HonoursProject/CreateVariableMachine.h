@@ -77,4 +77,6 @@ public:
 
 	bool bCapsLock = false;
 
+	void CapsLock();
+
 };

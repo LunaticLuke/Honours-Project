@@ -7,7 +7,7 @@
 #include "Nodes/FunctionNode.h"
 #include "Nodes/VariableNodeActor.h"
 #include "Nodes/NodeActor.h"
-
+#include "Nodes/WhileLoopNode.h"
 
 
 // Sets default values
@@ -48,8 +48,11 @@ void AProgramManager::Tick(float DeltaTime)
 
 void AProgramManager::AddFunctionToProgram(AFunctionNode* FunctionToAdd)
 {
-	ProgramExecution.Push(FunctionToAdd);
-	FunctionToAdd->bAddedToProgram = true;
+	if(!FunctionToAdd->bWithinFunction)
+	{
+		ProgramExecution.Push(FunctionToAdd);
+		FunctionToAdd->bAddedToProgram = true;
+	}
 	Console->DisplayProgramExecution(FunctionToAdd);
 }
 
@@ -77,6 +80,15 @@ void AProgramManager::RunProgram()
 			else
 			{
 				ProgramExecution[i]->ExecuteNode();
+				if(ProgramExecution[i]->IsA(AWhileLoopNode::StaticClass()))
+				{
+					if(Cast<AWhileLoopNode>(ProgramExecution[i])->bPotentialInfiniteLoop)
+					{
+						FString ErrorMessage = "While Loop Is Either Infinite Or Longer Than Expected For Solution";
+						Console->AddToLog(ErrorMessage);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -137,5 +149,29 @@ void AProgramManager::SetVariableValue(FString VariableName, FString TextValue, 
 ANodeConsoleManager* AProgramManager::GetConsole()
 {
 	return Console;
+}
+
+void AProgramManager::Undo()
+{
+	AActor* UndoneNode = ProgramExecution[ProgramExecution.Num() - 1];
+	ProgramExecution.Pop();
+	ClearProgram();
+	for(int i = 0; i < ProgramVariables.Num();i++)
+	{
+		Console->DisplayVariable(ProgramVariables[i]);
+	}
+	for(int i = 0; i < ProgramExecution.Num();i++)
+	{
+		Console->DisplayProgramExecution(ProgramExecution[i]);
+	}
+	UndoneNode->SetActorLocation(UndoPoint->GetActorLocation());
+	UndoneNode->SetActorHiddenInGame(false);
+}
+
+void AProgramManager::ClearProgram()
+{
+	ProgramVariables.Empty();
+	ProgramExecution.Empty();
+	Console->ClearLog();
 }
 

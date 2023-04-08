@@ -3,7 +3,13 @@
 
 #include "ProgramExecutionUI.h"
 
+#include "Components/Button.h"
 #include "Nodes/FunctionNode.h"
+
+void UProgramExecutionUI::NativeConstruct()
+{
+	Super::NativeConstruct();
+}
 
 void UProgramExecutionUI::DisplayProgram(AFunctionNode* NodeToAdd)
 {
@@ -16,4 +22,10 @@ void UProgramExecutionUI::ClearLog()
 {
 	ProgramExecutionString = "";
 	ExecutionTextBlock->SetText(FText::FromString(ProgramExecutionString));
+	Manager->ClearProgram();
+}
+
+void UProgramExecutionUI::SetManager(AProgramManager* ProgramToSet)
+{
+	Manager =  ProgramToSet;
 }

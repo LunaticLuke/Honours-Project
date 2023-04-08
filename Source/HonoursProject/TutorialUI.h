@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TutorialUI.generated.h"
 
+enum class ESlideTopic;
 class UImage;
 class UButton;
 /**
@@ -26,13 +27,31 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* PreviousSlideButton;
 	UPROPERTY(meta=(BindWidget))
+	UButton* DataTypesButton;
+	UPROPERTY(meta=(BindWidget))
+	UButton* ConditionalsButton;
+	UPROPERTY(meta=(BindWidget))
+	UButton* WhileLoopsButton;
+	UPROPERTY(meta=(BindWidget))
+	UButton* ForLoopsButton;
+	UPROPERTY(meta=(BindWidget))
 	UImage* SlideImage;
 	UPROPERTY(EditAnywhere)
 	TArray<UTexture2D*> DataTypesAndVariablesSlides;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UTexture2D*> ConditionalsSlides;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UTexture2D*> ForLoopSlides;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<UTexture2D*> WhileLoopSlides;
+	
 	UPROPERTY(EditAnywhere)
 	int currentSlideNumber=  0;
 
-
+	
 	UFUNCTION()
 	void NextSlide();
 	
@@ -41,10 +60,20 @@ protected:
 	
 	bool bQuizSlides = false;
 
+	ESlideTopic CurrentTopic;
 
 	int CurrentQuestionNumber = 0;
 	UPROPERTY(EditAnywhere)
 	TArray<UTexture2D*> QuizSlides;
+	
+	UFUNCTION()
+	void ChooseDataTypes();
+	UFUNCTION()
+	void ChooseConditionals();
+	UFUNCTION()
+	void ChooseForLoops();
+	UFUNCTION()
+	void ChooseWhileLoops();
 public:
 	int GetCurrentSlideNumber();
 
@@ -53,4 +82,8 @@ public:
 	void SetQuizNumber(int QuestionNumber);
 
 	void ShowImage(bool bShow);
+
+	ESlideTopic GetCurrentSlideTopic();
+
+	void UnlockTopic(ESlideTopic TopicToUnlock);
 };

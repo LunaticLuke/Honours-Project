@@ -50,7 +50,8 @@ public:
 	void SelectTrue();
 	UFUNCTION()
 	void SelectFalse();
-	
+	void UpdateUI();
+
 	TArray<UTypeLetterButton*> KeyboardButtons;
 	TArray<UTypeLetterButton*> NumpadButtons;
 	UPROPERTY(meta=(BindWidget))
@@ -80,7 +81,6 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* VariableStartingValueText;
 
-	
 
 protected:
 	ACreateVariableMachine* VariableMachine;

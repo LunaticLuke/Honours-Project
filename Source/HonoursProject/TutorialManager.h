@@ -7,6 +7,7 @@
 #include "TutorialManager.generated.h"
 
 
+class UPointLightComponent;
 class AAnswerBlock;
 class ANPCHelper;
 class ACustomerManager;
@@ -26,9 +27,9 @@ UENUM()
 enum class ESlideTopic
 {
 	DataTypes_Variables,
-	Arithmetic,
+	For_Loops,
 	Conditionals,
-	Loops
+	While_Loops
 };
 
 UENUM()
@@ -210,10 +211,16 @@ protected:
 	bool bPreTaskAction = false;
 
 	bool bPostTaskAction = false;
+	
+	UPROPERTY(EditAnywhere)
+	UPointLightComponent* PointLight;
+
+	bool bLightLerping = false;
 
 	int CurrentDialogueNumber = 0;
 
-
+	float lerpNumber = 0;
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -66,6 +66,14 @@ public:
 	void SetVariableValue(FString VariableName, FString TextValue, double NumberValue);
 
 	ANodeConsoleManager* GetConsole();
+	
+	UFUNCTION()
+	void Undo();
+	UPROPERTY(EditAnywhere)
+	AActor* UndoPoint;
+	
+	UFUNCTION()
+	void ClearProgram();
 
 
 };

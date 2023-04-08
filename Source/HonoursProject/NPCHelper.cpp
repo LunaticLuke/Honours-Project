@@ -42,8 +42,11 @@ void ANPCHelper::Tick(float DeltaTime)
 		UnassignedText = "";
 	}
 	
-	
-	//FRotator lookAt = UKismetMathLibrary::FindLookAtRotation(WidgetComponent->GetComponentLocation(),UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetActorLocation());
+	if(bTalking)
+	{
+		FRotator lookAt = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetActorLocation());
+		SetActorRotation(lookAt);
+	}	
 	//WidgetComponent->SetWorldRotation(lookAt);
 }
 

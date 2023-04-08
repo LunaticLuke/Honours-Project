@@ -36,6 +36,8 @@ protected:
 	void SpawnCustomer();
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* PotionTriggerZone;
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* CustomerLeaveZone;
 	UFUNCTION()
 	virtual void OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
 	UPROPERTY(EditAnywhere)

@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "TypeLetterButton.generated.h"
 
+class UTextBlock;
 /**
  * 
  */
@@ -21,6 +22,10 @@ public:
 	bool bLetter = true;
 	UFUNCTION()
 	void AddCharacter();
+
+	void SetTextComponent(UTextBlock* TextToSet);
+
+	void UpdateText();
 protected:
 	UPROPERTY(EditAnywhere)
 	FString LowerCaseCharacterToAdd;
@@ -28,4 +33,6 @@ protected:
 	FString UpperCaseCharacterToAdd;
 	UPROPERTY(EditAnywhere)
 	FString NumberToAdd;
+
+	UTextBlock* TextComponent;
 };

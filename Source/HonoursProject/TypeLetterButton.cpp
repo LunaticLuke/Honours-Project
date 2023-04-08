@@ -4,6 +4,7 @@
 #include "TypeLetterButton.h"
 
 #include "CreateVariableMachine.h"
+#include "Components/TextBlock.h"
 
 UTypeLetterButton::UTypeLetterButton()
 {
@@ -20,7 +21,7 @@ if(!MachineRef)
 
 	if(LowerCaseCharacterToAdd == "Caps")
 	{
-		MachineRef->bCapsLock = !MachineRef->bCapsLock;
+		MachineRef->CapsLock();
 	}
 	else
 	{
@@ -56,5 +57,22 @@ if(!MachineRef)
 				MachineRef->AddToVariableStartingValue(NumberToAdd,true);
 			}
 		}
+	}
+}
+
+void UTypeLetterButton::SetTextComponent(UTextBlock* TextToSet)
+{
+	TextComponent = TextToSet;
+}
+
+void UTypeLetterButton::UpdateText()
+{
+	if(MachineRef->bCapsLock)
+	{
+		TextComponent->SetText(FText::FromString(UpperCaseCharacterToAdd));
+	}
+	else
+	{
+		TextComponent->SetText(FText::FromString(LowerCaseCharacterToAdd));
 	}
 }

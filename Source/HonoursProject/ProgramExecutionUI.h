@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "ProgramExecutionUI.generated.h"
 
+class AProgramManager;
 /**
  * 
  */
@@ -18,9 +19,17 @@ class HONOURSPROJECT_API UProgramExecutionUI : public UUserWidget
 	UTextBlock* ExecutionTextBlock;
 	FString ProgramExecutionString;
 
+	AProgramManager* Manager;
+
+	UButton* ClearLogButton;
 public:
+	void NativeConstruct() override;
+	
 	void DisplayProgram(class AFunctionNode* VariableToAdd);
 
+	UFUNCTION()
 	void ClearLog();
+
+	void SetManager(AProgramManager* ProgramToSet);
 	
 };
