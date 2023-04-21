@@ -83,7 +83,7 @@ void APrintNode::DisplayText()
 		TextComponentMessage += Parameters[0].FunctionNodeActor->GetTextComponentMessage() + " )";
 	}else if(Parameters[0].VariableNodeActor)
 	{
-		TextComponentMessage += Parameters[0].VariableNodeActor->GetTextComponentMessage() + " )";
+		TextComponentMessage += Parameters[0].VariableNodeActor->GetVariableName() + " )";
 	}
 	else
 	{
