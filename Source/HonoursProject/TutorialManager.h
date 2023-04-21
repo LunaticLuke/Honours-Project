@@ -20,7 +20,8 @@ enum class ETutorialLocations
 	StartingFire,
 	VariableMachine,
 	CustomerCounter,
-	Cauldron
+	Cauldron,
+	CentreTable
 };
 
 UENUM()

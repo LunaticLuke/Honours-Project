@@ -28,9 +28,17 @@ void APrintNode::ExecuteNode()
 	if(Parameters[0].FunctionNodeActor)
 	{
 		ValueToPrint = Parameters[0].FunctionNodeActor->GetWordReturnValue();
+		if(Parameters[0].CurrentParameterDataType == NodeDataTypes::Float || Parameters[0].CurrentParameterDataType == NodeDataTypes::Int)
+		{
+			ValueToPrint = FString::SanitizeFloat(Parameters[0].FunctionNodeActor->GetNumberReturnValue());
+		}
 	}else if(Parameters[0].VariableNodeActor)
 	{
 		ValueToPrint = Parameters[0].VariableNodeActor->GetVariableValue();
+		if(Parameters[0].CurrentParameterDataType == NodeDataTypes::Float || Parameters[0].CurrentParameterDataType == NodeDataTypes::Int)
+		{
+			ValueToPrint = FString::SanitizeFloat(Parameters[0].VariableNodeActor->GetNumberValue());
+		}
 	}
 	
 	Manager->GetConsole()->AddToLog(ValueToPrint);

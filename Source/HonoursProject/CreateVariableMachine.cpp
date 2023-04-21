@@ -114,9 +114,13 @@ void ACreateVariableMachine::AddToVariableStartingValue(FString ValueToAssign, b
 {
 	if(IsNumber)
 	{
+		
 		bNumberVariable = true;
-		VariableValue = VariableValue + ValueToAssign;
-		VariableNumberValue = FCString::Atod(*VariableValue);
+		if(ValueToAssign != "." || !VariableValue.Contains(".")) //Ensure that only one decimal point can be entered into a number value.
+		{
+			VariableValue = VariableValue + ValueToAssign;
+			VariableNumberValue = FCString::Atod(*VariableValue);
+		}
 	}
 	else
 	{

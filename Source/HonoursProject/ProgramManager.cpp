@@ -22,6 +22,9 @@ AProgramManager::AProgramManager()
 void AProgramManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+
+	Console->InitUI(this);
 }
 
 void AProgramManager::DisplayVariables()
@@ -58,6 +61,15 @@ void AProgramManager::AddFunctionToProgram(AFunctionNode* FunctionToAdd)
 
 void AProgramManager::RunProgram()
 {
+//Reset Variable Values Whenever The User Chooses To Run Program
+	for(int i = 0; i < ProgramVariables.Num();i++)
+	{
+		VariableData[i].CurrentNumberValue = VariableData[i].StartingNumberValue;
+		VariableData[i].CurrentTextValue = VariableData[i].StartingTextValue;
+		ProgramVariables[i]->SetVariableValue(VariableData[i].CurrentTextValue);
+		ProgramVariables[i]->SetNumberValue(VariableData[i].CurrentNumberValue);
+	}
+	
 	bool FoundError =  false;
 	for(int i = 0; i < ProgramExecution.Num();i++)
 	{
@@ -153,25 +165,28 @@ ANodeConsoleManager* AProgramManager::GetConsole()
 
 void AProgramManager::Undo()
 {
-	AActor* UndoneNode = ProgramExecution[ProgramExecution.Num() - 1];
-	ProgramExecution.Pop();
-	ClearProgram();
-	for(int i = 0; i < ProgramVariables.Num();i++)
+	if(ProgramExecution.Num() > 0)
 	{
-		Console->DisplayVariable(ProgramVariables[i]);
+		AActor* UndoneNode = ProgramExecution[ProgramExecution.Num() - 1];
+		ProgramExecution.Pop();
+		Console->ClearLog();
+		for(int i = 0; i < ProgramVariables.Num();i++)
+		{
+			Console->DisplayVariable(ProgramVariables[i]);
+		}
+		for(int i = 0; i < ProgramExecution.Num();i++)
+		{
+			Console->DisplayProgramExecution(ProgramExecution[i]);
+		}
+		UndoneNode->SetActorLocation(UndoPoint->GetActorLocation());
+		UndoneNode->SetActorHiddenInGame(false);
 	}
-	for(int i = 0; i < ProgramExecution.Num();i++)
-	{
-		Console->DisplayProgramExecution(ProgramExecution[i]);
-	}
-	UndoneNode->SetActorLocation(UndoPoint->GetActorLocation());
-	UndoneNode->SetActorHiddenInGame(false);
 }
 
 void AProgramManager::ClearProgram()
 {
-	ProgramVariables.Empty();
-	ProgramExecution.Empty();
+	//ProgramVariables.Empty();
+	//ProgramExecution.Empty();
 	Console->ClearLog();
 }
 

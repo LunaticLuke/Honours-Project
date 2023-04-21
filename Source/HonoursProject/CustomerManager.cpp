@@ -50,6 +50,8 @@ void ACustomerManager::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomerManager::SpawnCustomer,5.0f,true,5.0f);
 	Customer->SetActorHiddenInGame(true);
 	Customer->SetActorEnableCollision(false);
+
+	//ServedCustomers = 10;
 }
 
 void ACustomerManager::SpawnCustomer()
@@ -82,9 +84,10 @@ void ACustomerManager::OnParameterOverlap(UPrimitiveComponent* OverlappedCompone
 		}
 	}else if(OverlappedComponent == CustomerLeaveZone)
 	{
-		if(OtherActor->IsA(ACustomer::StaticClass()))
+		if(OtherActor->IsA(ACustomer::StaticClass()) && Customer->bCustomerLeaving)
 		{
 			Customer->SetActorHiddenInGame(true);
+			Customer->bCustomerLeaving = false;
 			Customer->SetActorEnableCollision(false);
 			bCustomerAlreadyInShop = false;
 		}

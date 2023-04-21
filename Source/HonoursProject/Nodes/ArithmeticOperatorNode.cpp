@@ -108,6 +108,12 @@ bool AArithmeticOperatorNode::IsThereCompileError()
 
 void AArithmeticOperatorNode::DisplayText()
 {
+	if(Parameters[0].CurrentParameterDataType == NodeDataTypes::Float || Parameters[1].CurrentParameterDataType == NodeDataTypes::Float)
+	{
+		ReturnType = NodeDataTypes::Float;
+		NodeStaticMesh->SetMaterial(0,*Materials.Find(ReturnType));
+	}
+	
 	TextComponentMessage = "";
 	if(Parameters[0].FunctionNodeActor)
 	{

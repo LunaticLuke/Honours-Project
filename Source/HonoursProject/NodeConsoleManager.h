@@ -52,5 +52,5 @@ public:
 
 	void ClearLog();
 	
-
+	void InitUI(class AProgramManager* Manager);
 };

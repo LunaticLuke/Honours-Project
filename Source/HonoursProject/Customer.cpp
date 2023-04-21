@@ -5,6 +5,7 @@
 
 #include "CustomerAIController.h"
 #include "Potion.h"
+#include "KismetPins/SGraphPinStructInstance.h"
 #include "Nodes/ArithmeticOperatorNode.h"
 #include "Nodes/LogicalOperatorNode.h"
 #include "Nodes/RelationalOperatorNode.h"
@@ -315,6 +316,7 @@ void ACustomer::VariableCheck()
 	{
 		GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Correct"));
 		bPickUpPotion = true;
+		bCustomerLeaving = true;
 		GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomer::EndAnimation,2.33f,false,2.33f);
 	}
 	else

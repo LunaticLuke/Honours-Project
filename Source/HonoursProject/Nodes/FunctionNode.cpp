@@ -132,6 +132,7 @@ else //Invalid type
 void AFunctionNode::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
+	
 	float ParamNumber = -5;
 	if(OverlappedComponent == Parameter1Mesh)
 	{
@@ -148,6 +149,15 @@ void AFunctionNode::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			AddParameter(ParamNumber,OtherActor);
 		}
+	}
+}
+
+void AFunctionNode::OnNodeBlockOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
+{
+	if(OtherComponent->ComponentHasTag("Hammer"))
+	{
+		GEngine->AddOnScreenDebugMessage(0,50.0f,FColor::Cyan,TEXT("Hammer Hit"));
 	}
 }
 

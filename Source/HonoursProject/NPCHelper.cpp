@@ -45,6 +45,8 @@ void ANPCHelper::Tick(float DeltaTime)
 	if(bTalking)
 	{
 		FRotator lookAt = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetActorLocation());
+		lookAt.Roll = GetActorRotation().Roll;
+		lookAt.Pitch = GetActorRotation().Pitch;
 		SetActorRotation(lookAt);
 	}	
 	//WidgetComponent->SetWorldRotation(lookAt);

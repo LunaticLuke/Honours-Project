@@ -9,6 +9,10 @@
 void UProgramExecutionUI::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	ClearLogButton->OnClicked.AddDynamic(this,&UProgramExecutionUI::ClearLog);
+
+	UndoButton->OnClicked.AddDynamic(this,&UProgramExecutionUI::Undo);
 }
 
 void UProgramExecutionUI::DisplayProgram(AFunctionNode* NodeToAdd)
@@ -29,3 +33,9 @@ void UProgramExecutionUI::SetManager(AProgramManager* ProgramToSet)
 {
 	Manager =  ProgramToSet;
 }
+
+void UProgramExecutionUI::Undo()
+{
+	Manager->Undo();
+}
+

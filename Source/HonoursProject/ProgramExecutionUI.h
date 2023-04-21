@@ -18,10 +18,12 @@ class HONOURSPROJECT_API UProgramExecutionUI : public UUserWidget
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* ExecutionTextBlock;
 	FString ProgramExecutionString;
-
+	UPROPERTY()
 	AProgramManager* Manager;
-
+	UPROPERTY(meta=(BindWidget))
 	UButton* ClearLogButton;
+	UPROPERTY(meta=(BindWidget))
+	UButton* UndoButton;
 public:
 	void NativeConstruct() override;
 	
@@ -31,5 +33,7 @@ public:
 	void ClearLog();
 
 	void SetManager(AProgramManager* ProgramToSet);
-	
+
+	UFUNCTION()
+	void Undo();
 };
