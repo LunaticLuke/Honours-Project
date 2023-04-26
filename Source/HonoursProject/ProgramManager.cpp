@@ -3,7 +3,10 @@
 
 #include "ProgramManager.h"
 
+#include "BlueprintFunctionNodeSpawner.h"
+#include "NodeAssemblyUI.h"
 #include "NodeConsoleManager.h"
+#include "Components/BoxComponent.h"
 #include "Nodes/FunctionNode.h"
 #include "Nodes/VariableNodeActor.h"
 #include "Nodes/NodeActor.h"
@@ -16,6 +19,13 @@ AProgramManager::AProgramManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	NodePlacementZone = CreateDefaultSubobject<UBoxComponent>(TEXT("Node Placement Zone"));
+
+	Param1Zone = CreateDefaultSubobject<UBoxComponent>(TEXT("Param 1 Zone"));
+
+	Param2Zone = CreateDefaultSubobject<UBoxComponent>(TEXT("Param 2 Zone"));
+
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget Component"));
 }
 
 // Called when the game starts or when spawned
@@ -23,8 +33,23 @@ void AProgramManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Param1Zone->OnComponentBeginOverlap.AddDynamic(this,&AProgramManager::OnParameterOverlap);
+	Param2Zone->OnComponentBeginOverlap.AddDynamic(this,&AProgramManager::OnParameterOverlap);
+	NodePlacementZone->OnComponentBeginOverlap.AddDynamic(this,&AProgramManager::OnParameterOverlap);
 
+	Param1Zone->OnComponentEndOverlap.AddDynamic(this,&AProgramManager::OnParameterEndOverlap);
+	Param2Zone->OnComponentEndOverlap.AddDynamic(this,&AProgramManager::OnParameterEndOverlap);
+	NodePlacementZone->OnComponentEndOverlap.AddDynamic(this,&AProgramManager::OnParameterEndOverlap);
+
+	AssemblyUI = Cast<UNodeAssemblyUI>(WidgetComponent->GetWidget());
+	
 	Console->InitUI(this);
+
+	for(int i = 0; i < FunctionNodes.Num();i++)
+	{
+		NodeLocations.Push(FunctionNodes[i]->GetActorLocation());
+	}
+	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&AProgramManager::NodeCheck,0.2f,true,0.2f);
 }
 
 void AProgramManager::DisplayVariables()
@@ -40,6 +65,99 @@ void AProgramManager::DisplayVariables()
 			Console->AddToLog(EnumManager::ConvertDataTypeToString(ProgramVariables[i]->GetDataType()) + " " + ProgramVariables[i]->GetVariableName() + " = " + FString::SanitizeFloat(VariableData[i].CurrentNumberValue));
 		}
 	}
+}
+
+void AProgramManager::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
+{
+	
+	if(OverlappedComponent == Param1Zone)
+	{
+		ANodeActor* Act1 = Cast<ANodeActor>(OtherActor);
+		if(Act1 && Param1Actor == nullptr)
+		{
+			Param1Actor = Act1;
+		}
+	}
+		
+	else if(OverlappedComponent == Param2Zone)
+	{
+		ANodeActor* Act2 = Cast<ANodeActor>(OtherActor);
+		if(Act2 && Param2Actor == nullptr)
+		{
+			Param2Actor = Act2;
+		}
+	}
+	
+	else if(OverlappedComponent == NodePlacementZone)
+	{
+		AFunctionNode* FuncAct = Cast<AFunctionNode>(OtherActor);
+		if(FuncAct && NodeActor == nullptr)
+		{
+			NodeActor = FuncAct;
+			NodeActor->bCombinable = true;
+			AssemblyUI->SetImage(OtherActor->GetClass());
+		}
+	}
+	
+}
+
+void AProgramManager::OnParameterEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex)
+{
+	 if(OverlappedComponent == Param1Zone)
+	 {
+		 ANodeActor* Act1 = Cast<ANodeActor>(OtherActor);
+	 	if(Act1)
+	 	{
+	 		if(Act1 == Param1Actor)
+	 		{
+	 			Param1Actor = nullptr;
+	 		}
+	 	}
+	 }
+
+	else if(OverlappedComponent == Param2Zone)
+	{
+		ANodeActor* Act2 = Cast<ANodeActor>(OtherActor);
+		if(Act2)
+		{
+			if(Act2 == Param2Actor)
+			{
+				Param2Actor = nullptr;
+			}
+		}
+	}
+
+
+	else if(OverlappedComponent == NodePlacementZone)
+	{
+		AFunctionNode* FuncAct = Cast<AFunctionNode>(OtherActor);
+		if(FuncAct)
+		{
+			if(FuncAct == NodeActor)
+			{
+				NodeActor->bCombinable = false;
+				NodeActor = nullptr;
+				AssemblyUI->ResetImage();
+			}
+		}
+	}
+
+}
+
+
+void AProgramManager::NodeCheck()
+{
+	for(int i = 0; i < FunctionNodes.Num();i++)
+	{
+		if(FunctionNodes[i]->bIsHeld)
+		{
+			FActorSpawnParameters SpawnInfo;
+			FunctionNodes[i] = GetWorld()->SpawnActor<AFunctionNode>(FunctionNodes[i]->GetClass(),NodeLocations[i],FRotator(0,0,0),SpawnInfo);
+		}
+	}
+	
 }
 
 // Called every frame
@@ -161,6 +279,26 @@ void AProgramManager::SetVariableValue(FString VariableName, FString TextValue, 
 ANodeConsoleManager* AProgramManager::GetConsole()
 {
 	return Console;
+}
+
+ANodeActor* AProgramManager::GetParamActor(int ParamNumber)
+{
+	switch (ParamNumber)
+	{
+	case 1:
+	return Param1Actor;
+		break;
+
+	case 2:
+		return  Param2Actor;
+		break;
+	default: return nullptr;break;;
+	}
+}
+
+AFunctionNode* AProgramManager::GetNodeActor()
+{
+	return NodeActor;
 }
 
 void AProgramManager::Undo()

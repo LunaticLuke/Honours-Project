@@ -5,7 +5,6 @@
 
 #include "CustomerAIController.h"
 #include "Potion.h"
-#include "KismetPins/SGraphPinStructInstance.h"
 #include "Nodes/ArithmeticOperatorNode.h"
 #include "Nodes/LogicalOperatorNode.h"
 #include "Nodes/RelationalOperatorNode.h"
@@ -23,13 +22,26 @@ ACustomer::ACustomer()
 	
 }
 
+void ACustomer::RandomCustomer()
+{
+	int RandomNumber = FMath::RandRange(0,1);
+
+	if(RandomNumber == 0)
+	{
+		GetMesh()->SetRelativeRotation(FRotator(0,-90,0));
+	}
+	else
+	{
+		GetMesh()->SetRelativeRotation(FRotator(0,0,0));
+	}
+	GetMesh()->SetSkeletalMesh(Meshes[RandomNumber]);
+	GetMesh()->SetAnimClass(AnimBlueprints[RandomNumber]->GetAnimBlueprintGeneratedClass());
+}
+
 // Called when the game starts or when spawned
 void ACustomer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
-	
 }
 
 void ACustomer::AreRequestedVariablesFound()
@@ -266,7 +278,10 @@ void ACustomer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ACustomer::MoveToCounter()
 {
-
+	if(CurrentPotion)
+	{
+		CurrentPotion->ResetPotion();
+	}
 	Cast<ACustomerAIController>(GetController())->MoveCustomer(ServingPoint->GetActorLocation());
 	
 	

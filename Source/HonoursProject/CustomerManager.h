@@ -42,22 +42,23 @@ protected:
 	virtual void OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
 	UPROPERTY(EditAnywhere)
 	UWidgetComponent* WidgetComponent;
-	
+	UPROPERTY()
 	UCustomerRequestUI* RequestUIClass;
-
+	UPROPERTY()
 	int ServedCustomers = 0;
-	
+	UPROPERTY()
 	bool bCustomerCanEnter = false;
-
+	UPROPERTY()
 	bool bCustomerAlreadyInShop = false;
-	
+	UPROPERTY()
 	FTimerHandle Ticker;
 
 public:	
 	// Called every frame
+	UFUNCTION()
 	virtual void Tick(float DeltaTime) override;
-
+	UFUNCTION()
 	int GetServedCustomers();
-
+	UFUNCTION()
 	void AllowCustomers(bool bAllow);
 };

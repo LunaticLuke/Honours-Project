@@ -7,6 +7,10 @@
 #include "ProgramManager.generated.h"
 
 
+class UNodeAssemblyUI;
+class UWidgetComponent;
+class ANodeActor;
+class UBoxComponent;
 class ANodeConsoleManager;
 class AVariableConsoleUI;
 //A struct that stores the current value of each variable in the program as well as the starting value;
@@ -50,7 +54,45 @@ protected:
 	TArray<FVariableProgramData> VariableData;
 
 	void DisplayVariables();
+	
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* NodePlacementZone;
+	
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* Param1Zone;
+	
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* Param2Zone;
 
+	UPROPERTY(EditAnywhere)
+	ANodeActor* Param1Actor;
+	
+	UPROPERTY(EditAnywhere)
+	ANodeActor* Param2Actor;
+	
+	UPROPERTY(EditAnywhere)
+	AFunctionNode* NodeActor;
+
+	UFUNCTION()
+	virtual void OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
+
+	UFUNCTION()
+	virtual void OnParameterEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
+	
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* WidgetComponent;
+	
+	UPROPERTY()
+	UNodeAssemblyUI* AssemblyUI;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<AFunctionNode*> FunctionNodes;
+
+	TArray<FVector> NodeLocations;
+
+	FTimerHandle Ticker;
+
+	void NodeCheck();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -66,6 +108,10 @@ public:
 	void SetVariableValue(FString VariableName, FString TextValue, double NumberValue);
 
 	ANodeConsoleManager* GetConsole();
+
+	ANodeActor* GetParamActor(int ParamNumber);
+
+	AFunctionNode* GetNodeActor();
 	
 	UFUNCTION()
 	void Undo();

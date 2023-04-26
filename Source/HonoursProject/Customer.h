@@ -29,6 +29,8 @@ public:
 
 	UPROPERTY()
 	bool bCustomerLeaving = false;
+
+	void RandomCustomer();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -48,6 +50,13 @@ protected:
 	bool CheckVariableName(FString NameToCheck);
 
 	void CheckProgramExecution();
+
+	UPROPERTY(EditAnywhere)
+	TArray<USkeletalMesh*> Meshes;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<UAnimBlueprint*> AnimBlueprints;
+	
 	UPROPERTY(EditAnywhere)
 	class APotion* CurrentPotion;
 

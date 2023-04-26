@@ -19,8 +19,12 @@ AFunctionNode::AFunctionNode()
 void AFunctionNode::BeginPlay()
 {
 	Super::BeginPlay();
-	Parameter1Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
-	Parameter2Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
+	
+	//Parameter1Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
+	//Parameter2Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
+	NodeStaticMesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnNodeBlockOverlap);
+	NodeStaticMesh->OnComponentHit.AddDynamic(this,&AFunctionNode::OnHit);
+	
 	NodeStaticMesh->SetMaterial(0,*Materials.Find(ReturnType));
 }
 
@@ -155,9 +159,46 @@ void AFunctionNode::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent,
 void AFunctionNode::OnNodeBlockOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
+	GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Overlap"));
 	if(OtherComponent->ComponentHasTag("Hammer"))
 	{
-		GEngine->AddOnScreenDebugMessage(0,50.0f,FColor::Cyan,TEXT("Hammer Hit"));
+		GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Hammer Hit"));
+
+		if(bCombinable)
+		{
+			if(Manager->GetParamActor(1))
+			{
+				AddParameter(0,Manager->GetParamActor(1));
+			}
+
+			if(Manager->GetParamActor(2))
+			{
+				AddParameter(1,Manager->GetParamActor(2));
+			}
+		}
+	}
+}
+
+void AFunctionNode::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Hit"));
+	if(OtherComp->ComponentHasTag("Hammer"))
+	{
+		GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Hammer Hit"));
+
+		if(bCombinable)
+		{
+			if(Manager->GetParamActor(1))
+			{
+				AddParameter(0,Manager->GetParamActor(1));
+			}
+
+			if(Manager->GetParamActor(2))
+			{
+				AddParameter(1,Manager->GetParamActor(2));
+			}
+		}
 	}
 }
 
@@ -184,6 +225,7 @@ void AFunctionNode::AddParameter(int ParameterNumber, AActor* NodeToSet)
 					//Comp->SetSimulatePhysics(false); //Disable the physics.
 				}
 				DisplayText(); //Update the text to show the new variable.
+				//NodeToSet->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
 				}
 			else
 			{

@@ -23,6 +23,10 @@ protected:
 	UStaticMeshComponent* PotionBottleMesh;
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* PotionMaterial;
+
+	FVector StartingLocation;
+
+	FRotator StartingRotation;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -34,4 +38,6 @@ public:
 	TArray<class AFunctionNode*> ProgramArray;
 	UPROPERTY(EditAnywhere)
 	TArray<FVariableProgramData> VariableData;
+
+	void ResetPotion();
 };

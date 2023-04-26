@@ -84,14 +84,15 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* Parameter2Mesh;
 
-
-	bool bCombined = false;
+	
 	
 	UFUNCTION()
 	virtual void OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
 
 	UFUNCTION()
 	virtual void OnNodeBlockOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 public:
 	
 	UFUNCTION(BlueprintCallable)
@@ -102,8 +103,8 @@ public:
 	 */
 	virtual bool IsThereCompileError();
 
-
-	
+	UPROPERTY(EditAnywhere)
+	bool bCombinable = false;
 	
 	UFUNCTION(BlueprintCallable)
 	virtual void AddParameter(int ParameterNumber, AActor* NodeToSet);

@@ -17,7 +17,9 @@ APotion::APotion()
 void APotion::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	StartingLocation = GetActorLocation();
+	StartingRotation = GetActorRotation();
 }
 
 // Called every frame
@@ -33,6 +35,29 @@ void APotion::SetProgram(TArray<FVariableProgramData> VariableArray, TArray<AFun
 	VariableData = VariableArray;
 	ProgramVariables = VariableNodeActors;
 	ProgramArray = ProgramArrayParam;
+}
+
+void APotion::ResetPotion()
+{
+	for(int i = 0; i < ProgramVariables.Num();i++)
+	{
+		ProgramVariables.Pop();
+	}
+
+	for(int i = 0; i < ProgramArray.Num();i++)
+	{
+		ProgramArray.Pop();
+	}
+
+	for(int i = 0; i < VariableData.Num(); i++)
+	{
+		VariableData.Pop();
+	}
+	
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	SetActorLocation(StartingLocation);
+	SetActorRotation(StartingRotation);
 }
 
                                                                      

@@ -58,6 +58,7 @@ void ACustomerManager::SpawnCustomer()
 {
 	if(CurrentRequestNumber < Requests.Num() && bCustomerCanEnter && !bCustomerAlreadyInShop)
 	{
+		Customer->RandomCustomer();
 		Customer->SetRequest(Requests[CurrentRequestNumber]);
 		RequestUIClass->SetCustomerRequest(Requests[CurrentRequestNumber]->CustomerRequestDialogue);
 		Customer->MoveToCounter();
