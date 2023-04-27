@@ -66,7 +66,7 @@ void ANodeConsoleManager::ClearLog()
 {
 	Cast<UProgramConsoleLogUI>(ProgramConsoleOutputUI->GetWidget())->ClearLog();
 	Cast<UVariableListUI>(VariableListUI->GetWidget())->ClearVariableLog();
-	//Cast<UProgramExecutionUI>(ProgramExecutionUI->GetWidget())->ClearLog();
+	Cast<UProgramExecutionUI>(ProgramExecutionUI->GetWidget())->ClearLog();
 }
 
 void ANodeConsoleManager::InitUI(AProgramManager* Manager)

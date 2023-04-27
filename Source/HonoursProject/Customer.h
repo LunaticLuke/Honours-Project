@@ -74,9 +74,13 @@ protected:
 
 	bool CheckInnerParameter(AActor* NodeToCheck, int Index, double ValueToCheck, FString TextToCheck);
 
-
+	UPROPERTY()
 	FTimerHandle Ticker;
 	
+	UPROPERTY(EditAnywhere)
+	USoundBase* SuccessSound;
+	UPROPERTY(EditAnywhere)
+	USoundBase* FailSound;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

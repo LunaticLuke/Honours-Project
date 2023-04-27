@@ -24,6 +24,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* PotionMaterial;
 
+    UMaterialInterface* DefaultMaterial;
+
 	FVector StartingLocation;
 
 	FRotator StartingRotation;

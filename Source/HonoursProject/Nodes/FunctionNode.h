@@ -83,8 +83,8 @@ protected:
 	UStaticMeshComponent* Parameter1Mesh;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UStaticMeshComponent* Parameter2Mesh;
-
-	
+	UPROPERTY(EditAnywhere)
+	USoundBase* HammerSound;
 	
 	UFUNCTION()
 	virtual void OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit);

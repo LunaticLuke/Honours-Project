@@ -20,6 +20,8 @@ void APotion::BeginPlay()
 
 	StartingLocation = GetActorLocation();
 	StartingRotation = GetActorRotation();
+
+	DefaultMaterial = PotionBottleMesh->GetMaterial(0);
 }
 
 // Called every frame
@@ -58,6 +60,8 @@ void APotion::ResetPotion()
 
 	SetActorLocation(StartingLocation);
 	SetActorRotation(StartingRotation);
+	
+	PotionBottleMesh->SetMaterial(0,DefaultMaterial);
 }
 
                                                                      

@@ -5,6 +5,7 @@
 
 #include "VariableNodeActor.h"
 #include "HonoursProject/NodeConsoleManager.h"
+#include "Kismet/GameplayStatics.h"
 
 AFunctionNode::AFunctionNode()
 {
@@ -22,7 +23,7 @@ void AFunctionNode::BeginPlay()
 	
 	//Parameter1Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
 	//Parameter2Mesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnParameterOverlap);
-	NodeStaticMesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnNodeBlockOverlap);
+	//NodeStaticMesh->OnComponentBeginOverlap.AddDynamic(this,&AFunctionNode::OnNodeBlockOverlap);
 	NodeStaticMesh->OnComponentHit.AddDynamic(this,&AFunctionNode::OnHit);
 	
 	NodeStaticMesh->SetMaterial(0,*Materials.Find(ReturnType));
@@ -182,11 +183,11 @@ void AFunctionNode::OnNodeBlockOverlap(UPrimitiveComponent* OverlappedComponent,
 void AFunctionNode::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Hit"));
+	//GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Hit"));
 	if(OtherComp->ComponentHasTag("Hammer"))
 	{
-		GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Hammer Hit"));
-
+		//GEngine->AddOnScreenDebugMessage(0,5.0f,FColor::Cyan,TEXT("Hammer Hit"));
+		UGameplayStatics::PlaySound2D(GetWorld(),HammerSound);
 		if(bCombinable)
 		{
 			if(Manager->GetParamActor(1))
@@ -194,7 +195,7 @@ void AFunctionNode::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 				AddParameter(0,Manager->GetParamActor(1));
 			}
 
-			if(Manager->GetParamActor(2))
+			if(Manager->GetParamActor(2) && Parameters.Num() == 2)
 			{
 				AddParameter(1,Manager->GetParamActor(2));
 			}

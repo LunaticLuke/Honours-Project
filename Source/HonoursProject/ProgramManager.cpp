@@ -151,10 +151,14 @@ void AProgramManager::NodeCheck()
 {
 	for(int i = 0; i < FunctionNodes.Num();i++)
 	{
-		if(FunctionNodes[i]->bIsHeld)
+		if(FVector::Distance(FunctionNodes[i]->GetActorLocation(),NodeLocations[i]) >= 300.0f)
 		{
+			GEngine->AddOnScreenDebugMessage(0,10.0f,FColor::Cyan,TEXT("It's working"));
 			FActorSpawnParameters SpawnInfo;
 			FunctionNodes[i] = GetWorld()->SpawnActor<AFunctionNode>(FunctionNodes[i]->GetClass(),NodeLocations[i],FRotator(0,0,0),SpawnInfo);
+			FunctionNodes[i]->SetActorScale3D(FVector(0.5,0.2,0.2));
+			FunctionNodes[i]->SetActorLocation(NodeLocations[i]);
+			FunctionNodes[i]->Manager = this;
 		}
 	}
 	
@@ -169,11 +173,10 @@ void AProgramManager::Tick(float DeltaTime)
 
 void AProgramManager::AddFunctionToProgram(AFunctionNode* FunctionToAdd)
 {
-	if(!FunctionToAdd->bWithinFunction)
-	{
+	
 		ProgramExecution.Push(FunctionToAdd);
 		FunctionToAdd->bAddedToProgram = true;
-	}
+	
 	Console->DisplayProgramExecution(FunctionToAdd);
 }
 
@@ -306,6 +309,7 @@ void AProgramManager::Undo()
 	if(ProgramExecution.Num() > 0)
 	{
 		AActor* UndoneNode = ProgramExecution[ProgramExecution.Num() - 1];
+		ProgramExecution[ProgramExecution.Num() - 1]->bAddedToProgram = false;
 		ProgramExecution.Pop();
 		Console->ClearLog();
 		for(int i = 0; i < ProgramVariables.Num();i++)
@@ -325,6 +329,19 @@ void AProgramManager::ClearProgram()
 {
 	//ProgramVariables.Empty();
 	//ProgramExecution.Empty();
+
+	for(int i = 0; i < ProgramVariables.Num(); i++)
+	{
+		ProgramVariables.Pop();
+	}
+	for(int i = 0; i < ProgramExecution.Num();i++)
+	{
+		ProgramExecution.Pop();
+	}
+	for(int i = 0; i < VariableData.Num();i++)
+	{
+		VariableData.Pop();
+	}
 	Console->ClearLog();
 }
 

@@ -10,7 +10,7 @@ void UProgramExecutionUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ClearLogButton->OnClicked.AddDynamic(this,&UProgramExecutionUI::ClearLog);
+	ClearLogButton->OnClicked.AddDynamic(this,&UProgramExecutionUI::ClearButton);
 
 	UndoButton->OnClicked.AddDynamic(this,&UProgramExecutionUI::Undo);
 }
@@ -26,6 +26,10 @@ void UProgramExecutionUI::ClearLog()
 {
 	ProgramExecutionString = "";
 	ExecutionTextBlock->SetText(FText::FromString(ProgramExecutionString));
+}
+
+void UProgramExecutionUI::ClearButton()
+{
 	Manager->ClearProgram();
 }
 

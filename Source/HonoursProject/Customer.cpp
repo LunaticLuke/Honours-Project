@@ -5,6 +5,7 @@
 
 #include "CustomerAIController.h"
 #include "Potion.h"
+#include "Kismet/GameplayStatics.h"
 #include "Nodes/ArithmeticOperatorNode.h"
 #include "Nodes/LogicalOperatorNode.h"
 #include "Nodes/RelationalOperatorNode.h"
@@ -24,7 +25,7 @@ ACustomer::ACustomer()
 
 void ACustomer::RandomCustomer()
 {
-	int RandomNumber = FMath::RandRange(0,1);
+	int RandomNumber = FMath::RandRange(0,0);
 
 	if(RandomNumber == 0)
 	{
@@ -56,17 +57,17 @@ void ACustomer::AreRequestedVariablesFound()
 			{
 				if(CurrentVariable.RequiredDataTypes[x] == CurrentPotion->ProgramVariables[j]->GetDataType()) //Checking for correct data type
 				{
-					GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Data Types Match"));
+					//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Data Types Match"));
 					if(!CurrentVariable.bSpecificName || CurrentVariable.RequiredName == CurrentPotion->ProgramVariables[j]->GetVariableName()) //Checking the name, if needed
 					{
-						GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Name Match"));
+						//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Name Match"));
 						//Checking - if needed - the starting values match up
 						if(!CurrentVariable.bSpecificStartingValue || CurrentVariable.RequiredNumberStartingValue == CurrentPotion->VariableData[j].StartingNumberValue || CurrentVariable.RequiredTextStartingValue == CurrentPotion->VariableData[j].StartingTextValue) 
 						{
-							GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Starting Value Match"));
+							//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Starting Value Match"));
 							if(!CurrentVariable.bSpecificEndingValue || CurrentVariable.RequiredNumberValue == CurrentPotion->VariableData[j].CurrentNumberValue || CurrentVariable.RequiredTextValue == CurrentPotion->VariableData[j].CurrentTextValue)
 							{
-								GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Total Match"));
+								//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Total Match"));
 								CurrentRequest->RequestedVariables[i].bFoundWithinProgram = true;
 							}
 						}
@@ -313,7 +314,7 @@ void ACustomer::VariableCheck()
 	{
 		if(!CurrentRequest->RequestedVariables[i].bFoundWithinProgram)
 		{
-			GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Missing Variable"));
+			//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Yellow,TEXT("Missing Variable"));
 			bCorrectPotion = false;
 		}
 	}
@@ -322,7 +323,7 @@ void ACustomer::VariableCheck()
 	{
 		if(!CurrentRequest->RequestedFunctions[i].bFoundWithinProgram)
 		{
-			GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Missing Node"));
+			//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Missing Node"));
 			bCorrectPotion = false;
 		}
 	}
@@ -332,11 +333,13 @@ void ACustomer::VariableCheck()
 		GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Correct"));
 		bPickUpPotion = true;
 		bCustomerLeaving = true;
+		UGameplayStatics::PlaySound2D(GetWorld(),SuccessSound);
 		GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomer::EndAnimation,2.33f,false,2.33f);
 	}
 	else
 	{
 		bShakeHead = true;
+		UGameplayStatics::PlaySound2D(GetWorld(),FailSound);
 		GetWorld()->GetTimerManager().SetTimer(Ticker,this,&ACustomer::EndAnimation,1.6f,false,1.6f);
 	}
 }

@@ -21,5 +21,6 @@ void UVariableListUI::DisplayVariables(AVariableNodeActor* VariableToAdd)
 
 void UVariableListUI::ClearVariableLog()
 {
+	VariableListString = "";
 	VariableText->SetText(FText::FromString(VariableListString));
 }

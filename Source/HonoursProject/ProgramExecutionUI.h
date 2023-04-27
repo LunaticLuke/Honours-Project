@@ -31,6 +31,8 @@ public:
 
 	UFUNCTION()
 	void ClearLog();
+	UFUNCTION()
+	void ClearButton();
 
 	void SetManager(AProgramManager* ProgramToSet);
 

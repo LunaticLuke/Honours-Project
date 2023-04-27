@@ -66,6 +66,7 @@ void ACustomerManager::SpawnCustomer()
 		CurrentRequestNumber++;
 		Customer->SetActorHiddenInGame(false);
 		Customer->SetActorEnableCollision(true);
+		ServedCustomers++;
 		//Customer->VariableCheck();
 	}
 }

@@ -45,10 +45,10 @@ void ATutorialManager::BeginPlay()
 void ATutorialManager::OnParameterOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Hit"));
+	//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Hit"));
 	if(OtherActor->IsA(AAnswerBlock::StaticClass()))
 	{
-		GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Answer Block"));
+		//GEngine->AddOnScreenDebugMessage(-1,50.0f,FColor::Cyan,TEXT("Answer Block"));
 
 		QuizAnswer = Cast<AAnswerBlock>(OtherActor)->GetAnswer();
 	}
@@ -167,6 +167,7 @@ void ATutorialManager::CheckProgress()
 		case ETutorialTaskType::Customers:
 			if(CustomerManager->GetServedCustomers() >= TutorialTasks[CurrentTaskNumber].TargetCustomersServed)
 			{
+				CustomerManager->AllowCustomers(false);
 				if(!TutorialTasks[CurrentTaskNumber].bCompletedTask)
 				{
 					//If this task has a post task action, this needs to be completed before advancing to the next task

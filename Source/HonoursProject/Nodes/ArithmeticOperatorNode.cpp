@@ -43,7 +43,7 @@ void AArithmeticOperatorNode::ExecuteNode()
 		int ParameterValue1 = ParameterValues[0];
 		int ParameterValue2 = ParameterValues[1]; //Create int versions for the modulus operator
 
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE,200,FColor::Green,FString::Printf(TEXT("Arithmetic: %f,%f"),ParameterValues[0],ParameterValues[1]));
+	//GEngine->AddOnScreenDebugMessage(INDEX_NONE,200,FColor::Green,FString::Printf(TEXT("Arithmetic: %f,%f"),ParameterValues[0],ParameterValues[1]));
 	switch (ArithmeticOperation)
 	{
 	case ArithmeticOperatorType::Addition:
