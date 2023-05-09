@@ -66,7 +66,6 @@ void ACustomerManager::SpawnCustomer()
 		CurrentRequestNumber++;
 		Customer->SetActorHiddenInGame(false);
 		Customer->SetActorEnableCollision(true);
-		ServedCustomers++;
 		//Customer->VariableCheck();
 	}
 }
@@ -92,6 +91,7 @@ void ACustomerManager::OnParameterOverlap(UPrimitiveComponent* OverlappedCompone
 			Customer->bCustomerLeaving = false;
 			Customer->SetActorEnableCollision(false);
 			bCustomerAlreadyInShop = false;
+			ServedCustomers++;
 		}
 	}
 }

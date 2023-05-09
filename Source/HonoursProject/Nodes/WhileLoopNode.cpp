@@ -154,9 +154,10 @@ void AWhileLoopNode::CheckCodeBlock()
 		{
 			CodeBlock[i]->bWithinFunction = false;
 		}
+		CodeBlock.Empty();
 		if(CurrentAttachedNode)
 		{
-			CodeBlock.Empty();
+			
 			AFunctionNode* CurrentNodeActor = CurrentAttachedNode;
 
 			CodeBlock.Push(CurrentNodeActor);

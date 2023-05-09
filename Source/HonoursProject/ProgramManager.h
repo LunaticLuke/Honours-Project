@@ -46,8 +46,6 @@ protected:
 	TArray<class AFunctionNode*> ProgramExecution;
 	UPROPERTY(EditAnywhere)
 	ANodeConsoleManager* Console;
-
-	AVariableConsoleUI* VariableUI;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TArray<class AVariableNodeActor*> ProgramVariables;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
@@ -87,10 +85,16 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	TArray<AFunctionNode*> FunctionNodes;
-
+	UPROPERTY()
 	TArray<FVector> NodeLocations;
-
+	UPROPERTY()
 	FTimerHandle Ticker;
+	
+	UPROPERTY()
+	FTimerHandle TestTicker;
+	
+	UFUNCTION()
+	void InitUI();
 
 	void NodeCheck();
 public:	
@@ -106,11 +110,11 @@ public:
 	AVariableNodeActor* GetVariableNode(FString VariableName);
 	UFUNCTION(BlueprintCallable)
 	void SetVariableValue(FString VariableName, FString TextValue, double NumberValue);
-
+	UFUNCTION()
 	ANodeConsoleManager* GetConsole();
-
+	UFUNCTION()
 	ANodeActor* GetParamActor(int ParamNumber);
-
+	UFUNCTION()
 	AFunctionNode* GetNodeActor();
 	
 	UFUNCTION()

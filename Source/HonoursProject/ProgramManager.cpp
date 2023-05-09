@@ -3,7 +3,6 @@
 
 #include "ProgramManager.h"
 
-#include "BlueprintFunctionNodeSpawner.h"
 #include "NodeAssemblyUI.h"
 #include "NodeConsoleManager.h"
 #include "Components/BoxComponent.h"
@@ -42,14 +41,15 @@ void AProgramManager::BeginPlay()
 	NodePlacementZone->OnComponentEndOverlap.AddDynamic(this,&AProgramManager::OnParameterEndOverlap);
 
 	AssemblyUI = Cast<UNodeAssemblyUI>(WidgetComponent->GetWidget());
+
 	
-	Console->InitUI(this);
 
 	for(int i = 0; i < FunctionNodes.Num();i++)
 	{
 		NodeLocations.Push(FunctionNodes[i]->GetActorLocation());
 	}
 	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&AProgramManager::NodeCheck,0.2f,true,0.2f);
+	GetWorld()->GetTimerManager().SetTimer(Ticker,this,&AProgramManager::InitUI,0.2f,false,0.2f);
 }
 
 void AProgramManager::DisplayVariables()
@@ -146,6 +146,11 @@ void AProgramManager::OnParameterEndOverlap(UPrimitiveComponent* OverlappedCompo
 
 }
 
+
+void AProgramManager::InitUI()
+{
+	Console->InitUI(this);
+}
 
 void AProgramManager::NodeCheck()
 {
