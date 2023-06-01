@@ -29,7 +29,7 @@ public:
 
 	UPROPERTY()
 	bool bCustomerLeaving = false;
-
+	UFUNCTION()
 	void RandomCustomer();
 protected:
 	// Called when the game starts or when spawned

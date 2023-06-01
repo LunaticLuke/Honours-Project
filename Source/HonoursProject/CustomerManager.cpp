@@ -79,8 +79,8 @@ void ACustomerManager::OnParameterOverlap(UPrimitiveComponent* OverlappedCompone
 		{
 			if(OtherActor->GetRootComponent()->IsSimulatingPhysics()) //Stops potion from being submitted whilst in the players hand, must have let go 
 				{
-				Customer->SetPotion(Cast<APotion>(OtherActor));
-				Customer->VariableCheck();
+					Customer->SetPotion(Cast<APotion>(OtherActor));
+					Customer->VariableCheck();
 				}
 		}
 	}else if(OverlappedComponent == CustomerLeaveZone)
